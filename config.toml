@@ -1,4 +1,4 @@
-baseurl = "http://alexsalem.netlify.com"
+baseurl = "https://alexsalem.netlify.com"
 theme = "cocoa-eh-hugo-theme"
 builddrafts = true
  contentdir = "content" 
