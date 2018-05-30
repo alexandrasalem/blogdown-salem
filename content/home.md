@@ -7,3 +7,5 @@ _This is the home page. It will display the blog section if there is one, and a 
 Hey ! Welcome to the **Cocoa Enhanced theme**. 
 
 Hi!!!!!!
+
+Here are some slides: 
