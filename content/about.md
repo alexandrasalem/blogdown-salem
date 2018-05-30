@@ -13,5 +13,5 @@ I have a B.A. in Mathematics from Reed College in Portland, OR.
 My main interests are Natural Language Processing, Data Science, and environmental work. 
 
 My general career goals are to be a Research Scientist who uses Computer Science as a tool to further some important research--but I'm not sure what kind yet.  
-> Weeee  
+> Waddup 
  
