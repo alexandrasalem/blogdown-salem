@@ -1,0 +1,85 @@
+---
+title: "TADA!"
+subtitle: "Lab 06: Working n the Tada!-verse"
+author: "Alex Salem"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    nature:
+      highlightStyle: atelier-lakeside-light
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+# Slide 1
+This is slide 1
+
+---
+# Slide 2
+This is slide 2
+
+---
+class: inverse, center
+# This title
+## With this subtitle
+
+---
+# Column Slides
+.pull-left[
+on your left
+]
+
+.pull-right[
+on your right
+]
+
+---
+# Incremental slides
+easy
+--
+does
+--
+it
+
+---
+# Column + Incremental slides
+.pull_left[
+hello 
+]
+--
+.pull_right[
+hello
+]
+
+---
+background-image: url("http://bit.ly/cs631-donkey")
+background-size: cover
+# Background
+
+---
+```{r echo = FALSE}
+knitr::include_graphics("https://bit.ly/cs631-pygmy")
+```
+
+---
+.pull-left[
+```{r echo = FALSE}
+knitr::include_graphics("https://bit.ly/cs631-pygmy")
+```
+]
+--
+.pull-right[
+```{r echo = FALSE}
+knitr::include_graphics("https://bit.ly/cs631-sheep")
+```
+]
+
+---
+```{r}
+knitr::kable(head(iris), format = "html")
+```
+
+---
+# Slide
+???
+note to self
