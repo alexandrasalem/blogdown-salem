@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Cocoa Enhanced</title>
+    <title>Alex Salem&#39;s Blog</title>
     <link>/</link>
-    <description>Recent content on Cocoa Enhanced</description>
+    <description>Recent content on Alex Salem&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 01 Jan 2017 00:00:00 +0000</lastBuildDate>
@@ -39,9 +39,7 @@
       <guid>/about/</guid>
       <description>With this theme, it is possible to add small sections that only contains one page like this. It will automatically appears in the header, at the end.
 Hello there!
-My name is Alex Salem.
- Weeee
- </description>
+My name is Alex Salem. I am a Research Assistant for the Center for Spoken Language Understanding (CSLU) at the Oregon Health &amp;amp; Science University (OHSU). I am also a part-time master&amp;rsquo;s student in the Computer Science &amp;amp; Electrical Engineering department, which is the education program for CSLU.</description>
     </item>
     
     <item>
