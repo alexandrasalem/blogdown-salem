@@ -8,4 +8,4 @@ Hey ! Welcome to the **Cocoa Enhanced theme**.
 
 Hi!!!!!!
 
-Here are some slides: [here](/slides/Tada.html)
+Here are some slides: [here](slides/Tada.html)
