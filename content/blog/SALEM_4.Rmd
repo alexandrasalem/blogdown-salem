@@ -1,0 +1,122 @@
+---
+title: "SALEM_4 Edited"
+author: "Alex Salem"
+date: "May 13, 2018"
+output: html_document
+---
+##Preliminary information:
+
+###Original data and graph:
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Loading packages:
+```{r message=FALSE}
+library(tidyverse)
+library(forcats)
+library(RColorBrewer)
+library(viridis)
+library(ggthemes)
+library(wesanderson)
+library(knitr)
+```
+
+Reading in data:
+```{r}
+guns<- read_csv("https://raw.githubusercontent.com/hadley/gun-sales/master/data/ncis_bystate_bymonth_bytype.csv", col_types = cols(state = col_factor(levels = NULL)))
+
+glimpse(guns)
+```
+
+Original filtering/summarizing:
+```{r}
+guns_pnw <- guns %>% 
+  filter(state == c("Oregon", "California", "Washington")) %>% 
+  group_by(year, state) %>% 
+  summarize(guns_sold_year = sum(guns_sold))
+
+guns_pnw
+
+```
+
+Original graph:
+```{r}
+guns_pnw_graph <- ggplot(guns_pnw, aes(x = year, guns_sold_year)) +
+  geom_point(aes(color = state)) +
+  ggtitle("Guns sold per year in Oregon, California, and Washington") +
+  labs(x = "Year", y = "Guns Sold")
+
+guns_pnw_graph
+```
+
+###Original criticism:
+This is graph would be better if it included guns sold normalized by population instead. That would allow us to better compare the change over time between states.
+
+###New data and graph:
+```{r}
+#adding the state population mean:
+#note: I filtered out 2015 since there were some errors in the data there--population was 11 for California at one point.
+guns_pnw_2 <- guns %>% 
+  filter (year != 2015) %>% 
+  filter(state == c("Oregon", "Washington", "California")) %>%
+  group_by(state, year, population) %>% 
+  summarise(guns_sold_year = sum(guns_sold), state_pop = mean(as.double(population)))
+
+guns_pnw_2
+
+#creating the guns sold per thousand people:
+guns_pnw_2 <- guns_pnw_2 %>% 
+  mutate(guns_sold_year_normalized_per_thousand = (1000*guns_sold_year/state_pop))
+
+guns_pnw_2
+
+#the plot:
+ggplot(guns_pnw_2, aes(x = year, y = guns_sold_year_normalized_per_thousand, color = state)) +
+  geom_point(alpha = .7) +
+  ggtitle("Guns sold per thousand people in Oregon, California, \nand Washington") +
+  labs(x = "Year", y = "Guns Sold per thousand") +
+  coord_cartesian(xlim = c(1998, 2014)) +
+  scale_x_continuous(breaks=seq(1998, 2014, 2)) +
+  scale_color_hue(breaks=c("Oregon", "Washington", "California"))
+
+```
+
+
+###Changes I made:
+* Changed the underlying data to represent guns sold per thousand, normalized by population.
+* Changed the x-axis to include more tick marks, so the trend was clearer.
+* Changed the order of the variables so that the legend matched the order of the sets of points.
+
+##Graph Brief:
+
+###Type of Graph:
+This graph is a *scatter plot*.
+
+###Description of the data:
+This data comes from the NY Times gun sales data, forked to Hadley Wickham's github. It is located [here](https://github.com/hadley/gun-sales). It has information on guns sales in the US from 1998 to 2015. It includes 34 different variables such as state, year, month, population, and guns sold. 
+
+###Audience:
+Here, I am aiming for a fairly general audience--anyone with some familiarity with scatter plots. No previous knowledge about this specific data is required.
+
+###Representation description:
+Scatter plots are used to show the relationship between two variables. One variable is on the x-axis and another is on the y-axis. For each point in a scatter plot, the horizontal position indicates its x-axis value and the vertical height represents its y-axis value. Tread lines or lines of best fit can be used to show the pattern between these two variables more clearly, and color can be used to add another variable layer to the plot.
+
+This graph shows the relationship between year and guns sold per thousand people across three states: Oregon, California, and Washington. It shows us that Oregon sold the most guns in comparison to its population in every year in this data set. Additionally, we see a generally upward trend across all three states since 1999.
+
+###How to read it & What to look for:
+A newbie should first pay special attention to the title and x- and y-axis labels. This should indicate what kind of relationship the graph is trying to show. Then, the viewer should identify some specific points, and look at their x- and y-values, to get a sense of how to read the graph. Finally, the viewer should look at the overall relationship shown--how does the change along the x-axis affect the change along the y-axis? 
+
+###Presentation tips:
+**Annotation**: Annotation can be used on a scatter plot to point out a specific point of importance or to show an overall comparison value. In our graph we don't make use of annotation.
+
+**Color**: Color can be used on a scatter plot to add another variable layer. Scatter plots automatically have an x and y variable, but then the relationship between these variables and a third one can be added by coloring sets of points by a third variable. For instance, in our graph we color the points by state. Thus, we not only see the relationship between year and guns sold per thousand people, but we see it *across* states.
+
+**Size**: Size can also be used like color to add on another variable layer. You can vary the size of the points in the scatter point to indicate their position within a third variable.
+
+**Arrangement**: Scale can be used to vary how "close together" points seem. Here, we just take the automatic scale created by ggplot. However, we could have zoomed out or added more tick marks to vary the perception of the relationship.
+
+###Variations and alternatives:
+There are some variations of scatter plots. Here, we didn't include tread lines or a line of best fit, but some scatter plots do to make the pattern clearer. 
+
+###How I created it:
+I used ggplot2 in R. I created the x, y, and color variable using `aes(x = year, y = guns_sold_year_normalized_per_thousand, color = state)` to map year to x, guns sold per thousand to y, and state to color of the points. I used a `geom_point(alpha = .7)` layer for the scatter plot, where the alpha indicated that the points are semiopaque. I added the x- and y-axis labels and the title using `labs()` and `ggtitle()` respectively. I then used `coord_cartesian()` and `scale_x_continous()` to change the x axis tick marks. And finally I used `scale_color_hue(breaks=c())` to change the order of the legend.

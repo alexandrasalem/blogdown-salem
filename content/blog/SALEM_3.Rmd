@@ -1,0 +1,107 @@
+---
+title: "SALEM_3 Edited"
+author: "Alex Salem"
+date: "May 12, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##Preliminary Information:
+Note:
+
+I realized after creating this brief that a histogram could have been more informative. Year can be interpreted as a continous variable, which would then allow us to use a histogram instead of a bar chart. I chose to interpet year as discrete and use a bar chart because I also wanted to pick out/draw attention to specific years with specific counts using annotations. 
+
+Load packages:
+```{r load packages, message = FALSE}
+library(here)
+library(tidyverse)
+library(readr)
+library(ggthemes)
+```
+
+###Original data and graph:
+Read in data:
+```{r read in data}
+moma <- read_csv("http://bit.ly/cs631-moma")
+moma
+```
+
+Original plot:
+```{r}
+ggplot(moma, aes(x = year_created)) +
+  geom_bar(fill = "#11144b") +
+  ggtitle("Number of Paintings by Year Created") +
+  labs(x = "Year Created") +
+  theme_fivethirtyeight() +
+  theme(axis.title = element_text(family = "Palatino")) +
+  theme(text = element_text(family = "Palatino")) +
+  annotate('segment', x = 1979, xend = 1987, y = 55, yend = 55, size = .5) +
+  annotate('text', x = 1986, y = 55, label = "1977, Year with \n most paintings \n at MoMa", hjust = -.1, vjust = .8, family = "Georgia")
+
+```
+
+###Original criticism:
+This graph does an OK job at giving you a sense of the spread, but I think it could use a clearer x-axis and some more annotations.
+
+###New graph:
+```{r}
+ggplot(moma, aes(x = year_created)) +
+  geom_bar(fill = "#D68910") +
+  ggtitle("Number of Paintings in MoMA \nby Year Created") +
+  labs(x = "Year Created") +
+  theme_fivethirtyeight() +
+  theme(axis.title = element_text(family = "Palatino")) +
+  theme(text = element_text(family = "Palatino")) +
+  annotate('segment', x = 1979, xend = 1987, y = 55, yend = 55, size = .5) +
+  annotate('text', x = 1986, y = 55, label = "1977, Year with \n Most Paintings \n at MoMa", hjust = -.1, vjust = .8, family = "Georgia", size = 3)+
+  annotate('segment', x = 1872, xend = 1872, y = 4, yend = 12, size = .5)+
+  annotate('text', x = 1872, y = 20, label = "1872, \nFirst painting \nacquired", hjust=0.1, family = "Georgia", size = 3)+
+  annotate("segment", x = 2017, xend = 2017, y = 4, yend = 12, size = .5) +
+  annotate("text", x = 2017, y = 23, label = "2017, \n Most recent\npaintings\n acquired", hjust = 0.5, family = "Georgia", size = 3)+
+  coord_cartesian(xlim = c(1870, 2020), ylim = c(0, 60))+
+  scale_x_continuous(breaks=seq(1870, 2020, 15))
+
+```
+
+###Changes I made:
+* Clarified the title--added that the paintings are at the MoMa.
+* Updated the x-axis tick marks--added more so it's easier to see the trend.
+* Made the annotations smaller and added two more noting when the first and most recent paintings were acquired.
+* Changed the fill of the chart so that the annotations stood out more.
+
+##Graph Brief:
+###Type of graph:
+This graph is a *bar chart*, also known as a bar graph. 
+
+###Description of the data:
+The data comes from Alison's cleaned up version of the MoMa data on paintings and drawings in the collection. It contains 23 different variables on each of the 2,253 paintings in the data set. This includes information on the title, the year each painting was created and acquired, the size of each work, the artist information, etc. The data is located here: http://bit.ly/cs631-moma
+
+###Representation description:
+Bar charts are made up of columns on a graph, where each column represents a cateogrical (discrete) variable along the x-axis, and the size of the column represents a continous variable along the y-axis. Often, the y-axis of bar charts will be a count or other frequency of the x variable as with histograms, but it can also be a different quantitative variable. Note that the x- and y-axis can be reversed (as I discuss in variations below), but the previous description is the most common.
+
+Bar charts are distinguished from histograms. Both are made up of columns, but in histograms the x-axis is a continous variable instead of discrete, and the y-axis is always a frequency of that variable.
+
+The example plot represents the number of paintings by year created, where each column represents the cateogorical variable "Year", and the y-axis represents the count of paintings created. (Note: As I discuss at the beginning, I realize that year could also be interpreted as a continous variable to use a histogram.)
+
+###How to read it & What to look for:
+First, as with any graph, check out the title and axis labels. The title will give you an initial sense of what the chart represents. Then, look at the axes. The x-axis label will identify what each column represents--some cateogrical variable such as year, race, educational level, etc. The y-axis label will identify what the size of the column represents. This should allow you to interpet some story from the graph about the "size" of each column of some cateogorical variable, and the spread of those sizes. Next, look for any other aspects of the graph--color, a legend, etc. This will add further details to your interpretation. Overall, the bar chart is great for comparing the sizes of different groups.
+
+Consider our example graph. First, check out the title. It says "Number of Paintings by Year Created". This gives us that initial sense of what this graph represents. Then, look at the x- and y-axes. The x-axis says "Year Created" and the y-axis says "count". Thus, we can interpret that each column in this bar chart represents a year and we know that the height of each column represents the count of the number of paintings in that year. Now, look at the general shape. It looks like there aren't too many paintings before 1900, or after 2000, but we see through two annotations that the first painting was acquired in 1872, and the most recent painting was acquired in 2017. Additionally, there seems to be a series of peaks, with the largest number of paintings being identified by the annotation, as in 1977.
+
+###Presentation tips:
+**Annotation**: In our example, the plot has an annotation that identifies the year with the most paintings, 1977, as well as the years with the first and most recently acquired paintings. As in the example, annotatations can be used to identify a certain important column or set of columns. Alternatively, combined with a color fill, annotations can act as a replacement for a legend.
+
+**Color**: We used an orange fill for the columns, just so that the annotations would stick out. This was a fairly simple use of color-- however, color could be used to identify different groups within the categorical variable. I.e., different columns could be colored different colors to identify their placement in a group within the category.
+
+**Arrangement**: You can vary the scale of the y-axis to alter the interpretation of the size of the columns. 
+
+###Variations and alternatives: 
+There are some variations of this chart type. As I identified above, you can switch the x- and y- axes. Additionally, there is a stacked bar chart, which has more major differences. A stacked bar chart is used to compare parts of a whole. Then, each column represents 100 percent of some categorical variable, and each bar in each column represents some percentage of that variable. These can be useful if you want to see a spread across a single category.
+
+
+###Methods:
+I made this specific plot using ggplot2 in R. I used a global aesthetic mapping, where the x variable was year created. I used the `geom_bar()` layer to create the columns, where the automatic type for the column size was a count across that x variable. Additionally, I chose an orange Hex color fill for the columns. I added a title and axis labels using `ggtitle()` and `labs()` respectively. I also layered on the theme, `theme_fivethirtyeight()`. Additionally, I changed the x-axis tick marks using `coord_cartesian()` and `scale_x_continous()`. Finally, I added a few annotations that identify the year with the largest number of paintings, when the first painting was acquired, and when the most recent painting was acquired, using a series of `annotate()` layers.
+
+Ref: Yau, N. (2013). Data points: Visualization that means something. Indianapolis, IN: John Wiley & Sons.

@@ -1,0 +1,206 @@
+---
+title: "SALEM_4 Edited"
+author: "Alex Salem"
+date: "May 13, 2018"
+output: html_document
+---
+
+
+
+<div id="preliminary-information" class="section level2">
+<h2>Preliminary information:</h2>
+<div id="original-data-and-graph" class="section level3">
+<h3>Original data and graph:</h3>
+<p>Loading packages:</p>
+<pre class="r"><code>library(tidyverse)
+library(forcats)
+library(RColorBrewer)
+library(viridis)
+library(ggthemes)
+library(wesanderson)
+library(knitr)</code></pre>
+<p>Reading in data:</p>
+<pre class="r"><code>guns&lt;- read_csv(&quot;https://raw.githubusercontent.com/hadley/gun-sales/master/data/ncis_bystate_bymonth_bytype.csv&quot;, col_types = cols(state = col_factor(levels = NULL)))
+
+glimpse(guns)</code></pre>
+<pre><code>## Observations: 11,480
+## Variables: 34
+## $ state                 &lt;fct&gt; Alabama, Alaska, Arizona, Arkansas, Cali...
+## $ year                  &lt;int&gt; 1998, 1998, 1998, 1998, 1998, 1998, 1998...
+## $ month                 &lt;chr&gt; &quot;November&quot;, &quot;November&quot;, &quot;November&quot;, &quot;Nov...
+## $ month.num             &lt;int&gt; 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, ...
+## $ population            &lt;chr&gt; &quot;4822023&quot;, &quot;731449&quot;, &quot;6553255&quot;, &quot;2949131...
+## $ guns_per_thousand     &lt;chr&gt; &quot;0.2445446652&quot;, &quot;0.2150525874&quot;, &quot;0.06529...
+## $ guns_sold             &lt;int&gt; 1177, 157, 426, 658, 1834, 707, 59, 61, ...
+## $ multiplier            &lt;dbl&gt; 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, ...
+## $ instore_purchases     &lt;int&gt; 1072, 143, 389, 600, 1667, 647, 54, 56, ...
+## $ permit                &lt;int&gt; 0, 4, 0, 0, 434, 0, 17, 0, 0, 0, 2, 0, 2...
+## $ handgun               &lt;int&gt; 449, 71, 169, 149, 717, 181, 19, 14, 0, ...
+## $ longgun               &lt;int&gt; 603, 68, 200, 429, 950, 416, 35, 40, 0, ...
+## $ other                 &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ multiple              &lt;int&gt; 10, 2, 10, 11, 0, 25, 0, 1, 0, 10, 4, 0,...
+## $ multiple_corrected    &lt;int&gt; 10, 2, 10, 11, 0, 25, 0, 1, 0, 10, 4, 0,...
+## $ admin                 &lt;int&gt; 0, 0, 0, 0, 0, 0, 9, 0, 0, 40, 6, 0, 0, ...
+## $ prepawn_handgun       &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ prepawn_longgun       &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ prepawn_other         &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ redemption_handgun    &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ redemption_longgun    &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ redemption_other      &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ returned_handgun      &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ returned_longgun      &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ returned_other        &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ rental_handgun        &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ rental_longgun        &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ private_handgun       &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ private_longgun       &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ private_other         &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ privatereturn_handgun &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ privatereturn_longgun &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ privatereturn_other   &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ totals                &lt;int&gt; 1062, 145, 379, 589, 2101, 622, 80, 55, ...</code></pre>
+<p>Original filtering/summarizing:</p>
+<pre class="r"><code>guns_pnw &lt;- guns %&gt;% 
+  filter(state == c(&quot;Oregon&quot;, &quot;California&quot;, &quot;Washington&quot;)) %&gt;% 
+  group_by(year, state) %&gt;% 
+  summarize(guns_sold_year = sum(guns_sold))</code></pre>
+<pre><code>## Warning in `==.default`(state, c(&quot;Oregon&quot;, &quot;California&quot;, &quot;Washington&quot;)):
+## longer object length is not a multiple of shorter object length</code></pre>
+<pre><code>## Warning in is.na(e1) | is.na(e2): longer object length is not a multiple of
+## shorter object length</code></pre>
+<pre class="r"><code>guns_pnw</code></pre>
+<pre><code>## # A tibble: 53 x 3
+## # Groups:   year [?]
+##     year state      guns_sold_year
+##    &lt;int&gt; &lt;fct&gt;               &lt;int&gt;
+##  1  1998 California           1834
+##  2  1998 Oregon                383
+##  3  1999 California         270712
+##  4  1999 Oregon              57759
+##  5  1999 Washington          42676
+##  6  2000 California         228888
+##  7  2000 Oregon              47193
+##  8  2000 Washington          40299
+##  9  2001 California         218652
+## 10  2001 Oregon              47770
+## # ... with 43 more rows</code></pre>
+<p>Original graph:</p>
+<pre class="r"><code>guns_pnw_graph &lt;- ggplot(guns_pnw, aes(x = year, guns_sold_year)) +
+  geom_point(aes(color = state)) +
+  ggtitle(&quot;Guns sold per year in Oregon, California, and Washington&quot;) +
+  labs(x = &quot;Year&quot;, y = &quot;Guns Sold&quot;)
+
+guns_pnw_graph</code></pre>
+<p><img src="/blog/SALEM_4_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="original-criticism" class="section level3">
+<h3>Original criticism:</h3>
+<p>This is graph would be better if it included guns sold normalized by population instead. That would allow us to better compare the change over time between states.</p>
+</div>
+<div id="new-data-and-graph" class="section level3">
+<h3>New data and graph:</h3>
+<pre class="r"><code>#adding the state population mean:
+#note: I filtered out 2015 since there were some errors in the data there--population was 11 for California at one point.
+guns_pnw_2 &lt;- guns %&gt;% 
+  filter (year != 2015) %&gt;% 
+  filter(state == c(&quot;Oregon&quot;, &quot;Washington&quot;, &quot;California&quot;)) %&gt;%
+  group_by(state, year, population) %&gt;% 
+  summarise(guns_sold_year = sum(guns_sold), state_pop = mean(as.double(population)))</code></pre>
+<pre><code>## Warning in `==.default`(state, c(&quot;Oregon&quot;, &quot;Washington&quot;, &quot;California&quot;)):
+## longer object length is not a multiple of shorter object length</code></pre>
+<pre><code>## Warning in is.na(e1) | is.na(e2): longer object length is not a multiple of
+## shorter object length</code></pre>
+<pre class="r"><code>guns_pnw_2</code></pre>
+<pre><code>## # A tibble: 50 x 5
+## # Groups:   state, year [?]
+##    state       year population guns_sold_year state_pop
+##    &lt;fct&gt;      &lt;int&gt; &lt;chr&gt;               &lt;int&gt;     &lt;dbl&gt;
+##  1 California  1999 38041430           252317  38041430
+##  2 California  2000 38041430           208764  38041430
+##  3 California  2001 38041430           231185  38041430
+##  4 California  2002 38041430           169155  38041430
+##  5 California  2003 38041430           126375  38041430
+##  6 California  2004 38041430           140229  38041430
+##  7 California  2005 38041430           156920  38041430
+##  8 California  2006 38041430           158989  38041430
+##  9 California  2007 38041430           134387  38041430
+## 10 California  2008 38041430           149958  38041430
+## # ... with 40 more rows</code></pre>
+<pre class="r"><code>#creating the guns sold per thousand people:
+guns_pnw_2 &lt;- guns_pnw_2 %&gt;% 
+  mutate(guns_sold_year_normalized_per_thousand = (1000*guns_sold_year/state_pop))
+
+guns_pnw_2</code></pre>
+<pre><code>## # A tibble: 50 x 6
+## # Groups:   state, year [50]
+##    state       year population guns_sold_year state_pop guns_sold_year_no…
+##    &lt;fct&gt;      &lt;int&gt; &lt;chr&gt;               &lt;int&gt;     &lt;dbl&gt;              &lt;dbl&gt;
+##  1 California  1999 38041430           252317  38041430               6.63
+##  2 California  2000 38041430           208764  38041430               5.49
+##  3 California  2001 38041430           231185  38041430               6.08
+##  4 California  2002 38041430           169155  38041430               4.45
+##  5 California  2003 38041430           126375  38041430               3.32
+##  6 California  2004 38041430           140229  38041430               3.69
+##  7 California  2005 38041430           156920  38041430               4.12
+##  8 California  2006 38041430           158989  38041430               4.18
+##  9 California  2007 38041430           134387  38041430               3.53
+## 10 California  2008 38041430           149958  38041430               3.94
+## # ... with 40 more rows</code></pre>
+<pre class="r"><code>#the plot:
+ggplot(guns_pnw_2, aes(x = year, y = guns_sold_year_normalized_per_thousand, color = state)) +
+  geom_point(alpha = .7) +
+  ggtitle(&quot;Guns sold per thousand people in Oregon, California, \nand Washington&quot;) +
+  labs(x = &quot;Year&quot;, y = &quot;Guns Sold per thousand&quot;) +
+  coord_cartesian(xlim = c(1998, 2014)) +
+  scale_x_continuous(breaks=seq(1998, 2014, 2)) +
+  scale_color_hue(breaks=c(&quot;Oregon&quot;, &quot;Washington&quot;, &quot;California&quot;))</code></pre>
+<p><img src="/blog/SALEM_4_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="changes-i-made" class="section level3">
+<h3>Changes I made:</h3>
+<ul>
+<li>Changed the underlying data to represent guns sold per thousand, normalized by population.</li>
+<li>Changed the x-axis to include more tick marks, so the trend was clearer.</li>
+<li>Changed the order of the variables so that the legend matched the order of the sets of points.</li>
+</ul>
+</div>
+</div>
+<div id="graph-brief" class="section level2">
+<h2>Graph Brief:</h2>
+<div id="type-of-graph" class="section level3">
+<h3>Type of Graph:</h3>
+<p>This graph is a <em>scatter plot</em>.</p>
+</div>
+<div id="description-of-the-data" class="section level3">
+<h3>Description of the data:</h3>
+<p>This data comes from the NY Times gun sales data, forked to Hadley Wickham’s github. It is located <a href="https://github.com/hadley/gun-sales">here</a>. It has information on guns sales in the US from 1998 to 2015. It includes 34 different variables such as state, year, month, population, and guns sold.</p>
+</div>
+<div id="audience" class="section level3">
+<h3>Audience:</h3>
+<p>Here, I am aiming for a fairly general audience–anyone with some familiarity with scatter plots. No previous knowledge about this specific data is required.</p>
+</div>
+<div id="representation-description" class="section level3">
+<h3>Representation description:</h3>
+<p>Scatter plots are used to show the relationship between two variables. One variable is on the x-axis and another is on the y-axis. For each point in a scatter plot, the horizontal position indicates its x-axis value and the vertical height represents its y-axis value. Tread lines or lines of best fit can be used to show the pattern between these two variables more clearly, and color can be used to add another variable layer to the plot.</p>
+<p>This graph shows the relationship between year and guns sold per thousand people across three states: Oregon, California, and Washington. It shows us that Oregon sold the most guns in comparison to its population in every year in this data set. Additionally, we see a generally upward trend across all three states since 1999.</p>
+</div>
+<div id="how-to-read-it-what-to-look-for" class="section level3">
+<h3>How to read it &amp; What to look for:</h3>
+<p>A newbie should first pay special attention to the title and x- and y-axis labels. This should indicate what kind of relationship the graph is trying to show. Then, the viewer should identify some specific points, and look at their x- and y-values, to get a sense of how to read the graph. Finally, the viewer should look at the overall relationship shown–how does the change along the x-axis affect the change along the y-axis?</p>
+</div>
+<div id="presentation-tips" class="section level3">
+<h3>Presentation tips:</h3>
+<p><strong>Annotation</strong>: Annotation can be used on a scatter plot to point out a specific point of importance or to show an overall comparison value. In our graph we don’t make use of annotation.</p>
+<p><strong>Color</strong>: Color can be used on a scatter plot to add another variable layer. Scatter plots automatically have an x and y variable, but then the relationship between these variables and a third one can be added by coloring sets of points by a third variable. For instance, in our graph we color the points by state. Thus, we not only see the relationship between year and guns sold per thousand people, but we see it <em>across</em> states.</p>
+<p><strong>Size</strong>: Size can also be used like color to add on another variable layer. You can vary the size of the points in the scatter point to indicate their position within a third variable.</p>
+<p><strong>Arrangement</strong>: Scale can be used to vary how “close together” points seem. Here, we just take the automatic scale created by ggplot. However, we could have zoomed out or added more tick marks to vary the perception of the relationship.</p>
+</div>
+<div id="variations-and-alternatives" class="section level3">
+<h3>Variations and alternatives:</h3>
+<p>There are some variations of scatter plots. Here, we didn’t include tread lines or a line of best fit, but some scatter plots do to make the pattern clearer.</p>
+</div>
+<div id="how-i-created-it" class="section level3">
+<h3>How I created it:</h3>
+<p>I used ggplot2 in R. I created the x, y, and color variable using <code>aes(x = year, y = guns_sold_year_normalized_per_thousand, color = state)</code> to map year to x, guns sold per thousand to y, and state to color of the points. I used a <code>geom_point(alpha = .7)</code> layer for the scatter plot, where the alpha indicated that the points are semiopaque. I added the x- and y-axis labels and the title using <code>labs()</code> and <code>ggtitle()</code> respectively. I then used <code>coord_cartesian()</code> and <code>scale_x_continous()</code> to change the x axis tick marks. And finally I used <code>scale_color_hue(breaks=c())</code> to change the order of the legend.</p>
+</div>
+</div>

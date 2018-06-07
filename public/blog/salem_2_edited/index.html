@@ -15,9 +15,9 @@
 <meta property="og:site_name" content="Alex Salem&#39;s Blog" />
 <meta property="og:locale" content="nn_NO" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/blog/" />
-<meta property="og:title" content="Blog" />
-<meta property="twitter:title" content="Blog">
+<meta property="og:url" content="/blog/salem_2_edited/" />
+<meta property="og:title" content="SALEM_2_edited" />
+<meta property="twitter:title" content="SALEM_2_edited">
 
     <meta property="og:image" content="/img/banner.png">
     <meta property="twitter:card" content="summary">
@@ -29,10 +29,10 @@
 <title>
 
 
-     Alex Salem&#39;s Blog - Blog 
+     Alex Salem&#39;s Blog - SALEM_2_edited 
 
 </title>
-<link rel="canonical" href="/blog/">
+<link rel="canonical" href="/blog/salem_2_edited/">
 
 
 <style media="screen">
@@ -1056,8 +1056,6 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
 
 
 
-  <link href="/blog/index.xml" rel="alternate" type="application/rss+xml" title="Alex Salem&#39;s Blog" />
-
 
 </head>
 
@@ -1065,7 +1063,7 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
 <body>
 
 
-<div class="header header-home column">
+<div class="header column">
 
     <div class="container">
         
@@ -1104,87 +1102,204 @@ div.main .content .markdown pre, div.main .content .markdown pre code {
     </div>
 </div>
 
-<div class="main column">
+
+
+
+<div class="main post non-narrow zero-top-spacing column">
     <div class="container">
         <div class="content">
-            <div class="posts">
-                <div class="page-heading">Blog</div>
-                <ul>
-                    
-                        <li class="groupby">Sep, 2015</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Sep 28, 2015</span>
-    <a href="/blog/example-article/"><span>Example article</span></a>
-</li>
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
 
-                        
-                    
-                        <li class="groupby">Jul, 2015</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Jul 23, 2015</span>
-    <a href="/blog/hello-r-markdown/"><span>Hello R Markdown</span></a>
-</li>
+    SALEM_2_edited
 
+</div>
+
+                </div>
+                <div class="meta">
+                    <div class="date" title="Mon Jan 1 0001 00:00:00 UTC">Jan 1, 0001</div>
+                    
+                        
+                        <div class="author middot" title="Alex Salem">Alex Salem</div>
                         
                     
-                        <li class="groupby">Sep, 2014</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Sep 28, 2014</span>
-    <a href="/blog/creating-a-new-theme/"><span>Creating a New Theme</span></a>
-</li>
-
-                        
-                    
-                        <li class="groupby">Apr, 2014</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Apr 2, 2014</span>
-    <a href="/blog/getting-started-with-hugo/"><span>Getting Started with Hugo</span></a>
-</li>
-
-                        
-                            <li class="post-item">
-    <span class="meta">Apr 2, 2014</span>
-    <a href="/blog/hugo-template-primer/"><span>(Hu)go Template Primer</span></a>
-</li>
-
-                        
-                    
-                        <li class="groupby">Jan, 0001</li>
-                        
-                            <li class="post-item">
-    <span class="meta">Jan 1, 0001</span>
-    <a href="/blog/salem_4-edited/"><span>SALEM_4 Edited</span></a>
-</li>
-
-                        
-                            <li class="post-item">
-    <span class="meta">Jan 1, 0001</span>
-    <a href="/blog/salem_3-edited/"><span>SALEM_3 Edited</span></a>
-</li>
-
-                        
-                            <li class="post-item">
-    <span class="meta">Jan 1, 0001</span>
-    <a href="/blog/salem_2_edited/"><span>SALEM_2_edited</span></a>
-</li>
-
-                        
-                            <li class="post-item">
-    <span class="meta">Jan 1, 0001</span>
-    <a href="/blog/salem_1-edited/"><span>SALEM_1 Edited</span></a>
-</li>
-
-                        
-                    
-                </ul>
+                    <div class="reading-time middot">5 minute read</div>
+                    <div class="tags">
+                        <ul>
+                          
+                        </ul>
+                    </div>
+                    <div class="tags">
+                        <ul>
+                          
+                          
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <div class="markdown">
+                
+    
+    <div id="preliminary-information" class="section level2">
+<h2>Preliminary Information:</h2>
+<div id="loading-libraries" class="section level3">
+<h3>Loading libraries:</h3>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(gapminder)
+library(skimr)
+library(scales)</code></pre>
+</div>
+<div id="eda" class="section level3">
+<h3>EDA:</h3>
+<pre class="r"><code>gapminder</code></pre>
+<pre><code>## # A tibble: 1,704 x 6
+##    country     continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Afghanistan Asia       1952    28.8  8425333      779.
+##  2 Afghanistan Asia       1957    30.3  9240934      821.
+##  3 Afghanistan Asia       1962    32.0 10267083      853.
+##  4 Afghanistan Asia       1967    34.0 11537966      836.
+##  5 Afghanistan Asia       1972    36.1 13079460      740.
+##  6 Afghanistan Asia       1977    38.4 14880372      786.
+##  7 Afghanistan Asia       1982    39.9 12881816      978.
+##  8 Afghanistan Asia       1987    40.8 13867957      852.
+##  9 Afghanistan Asia       1992    41.7 16317921      649.
+## 10 Afghanistan Asia       1997    41.8 22227415      635.
+## # ... with 1,694 more rows</code></pre>
+<pre class="r"><code>glimpse(gapminder)</code></pre>
+<pre><code>## Observations: 1,704
+## Variables: 6
+## $ country   &lt;fct&gt; Afghanistan, Afghanistan, Afghanistan, Afghanistan, ...
+## $ continent &lt;fct&gt; Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia...
+## $ year      &lt;int&gt; 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...
+## $ lifeExp   &lt;dbl&gt; 28.801, 30.332, 31.997, 34.020, 36.088, 38.438, 39.8...
+## $ pop       &lt;int&gt; 8425333, 9240934, 10267083, 11537966, 13079460, 1488...
+## $ gdpPercap &lt;dbl&gt; 779.4453, 820.8530, 853.1007, 836.1971, 739.9811, 78...</code></pre>
+</div>
+<div id="original-graph" class="section level3">
+<h3>Original Graph:</h3>
+<pre class="r"><code>library(ggbeeswarm)
+
+ggplot(gapminder, aes(x = continent, y = gdpPercap)) +
+  geom_quasirandom(color = &quot;lightseagreen&quot;, alpha = .5) +
+  scale_y_log10() + #from data camp 
+  labs(x = &quot;Continent&quot;, y = &quot;GDP per capita&quot;) +
+  ggtitle(&quot;Spread of GDP per capita across continent&quot;)</code></pre>
+<p><img src="/blog/SALEM_2_files/figure-html/task%20number%202%20part%202-1.png" width="672" /></p>
+</div>
+<div id="original-criticism" class="section level3">
+<h3>Original criticism:</h3>
+<p>I think this graph needs a better y-axis. The log scale needs to be better explained and needs a better label and scale.</p>
+</div>
+<div id="new-graph" class="section level3">
+<h3>New Graph:</h3>
+<pre class="r"><code>#filter year:
+gapminder_2007 &lt;- gapminder %&gt;% 
+  filter(year == 2007)
+
+ggplot(gapminder_2007, aes(x = continent, y = gdpPercap)) +
+  geom_quasirandom(color = &quot;lightseagreen&quot;, alpha = .6) +
+  scale_y_log10(labels = comma) + #from data camp 
+  labs(x = &quot;Continent&quot;, y = &quot;GDP per capita&quot;, caption = &quot;Note: We are using a log scale for the y-axis. \nThus, each labelled tick mark on y-axis is the previous tick mark multiplied by ten.&quot;) +
+  ggtitle(&quot;Spread of GDP per capita across countries \nwithin continents, in 2007&quot;)</code></pre>
+<p><img src="/blog/SALEM_2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+</div>
+<div id="changes-made" class="section level2">
+<h2>Changes made:</h2>
+<ul>
+<li>Limited the data to looking only at one year: 2007. This makes more sense than including all the years at once.</li>
+<li>Changed the y-axis scale from using scientific notation to using standard comma separated numbers so that it’s easier to read.</li>
+<li>Added a caption explaining the log scale, so that an unfamiliar audience will understand it.</li>
+<li>Increased the alpha value for the points.</li>
+</ul>
+</div>
+<div id="graph-brief" class="section level2">
+<h2>Graph Brief:</h2>
+<div id="type-of-graph" class="section level3">
+<h3>Type of Graph:</h3>
+<p>This is a <em>beeswarm plot</em>.</p>
+</div>
+<div id="data" class="section level3">
+<h3>Data:</h3>
+<p>The data comes from the gapminder data set. This data set has 6 variables: country, continent, year, lifeExp (life expectation), population, and gdpPercap (GDP per capita). There are 1704 total observations.</p>
+</div>
+<div id="audience" class="section level3">
+<h3>Audience:</h3>
+<p>Here, I am aiming for a fairly general audience–anyone with familiarity with basic plots and how to read them should be able to process this, but no further previous information on this specific data is required. With the previous graph, I think the reader needed to understand what a log scale meant as well, which is why I added the explanation of that to my new graph.</p>
+</div>
+<div id="representation-description" class="section level3">
+<h3>Representation Description:</h3>
+<p>In general, a beeswarm represents each observation within a cateogry (along the x-axis) as a point. The point’s vertical height (its location on the y-axis), is some value of a continous variable. It is used to show the spread of observations within a category.</p>
+</div>
+<div id="how-to-read-it-what-to-look-for" class="section level3">
+<h3>How to read it &amp; What to look for:</h3>
+<p>A newbie should first identify the title and x- and y-axis labels. This should give a sense of what category is being considered, and what variable of that cateogry is being assessed. Then, the viewer should check out a few specific points–identify their x- and y-values to gauge the range of observations. Then, the viewer should look more generally at the shape of the beeswarm(s). What trend do you see in each cateogry? What is the spread of observations in that cateogory like? How does this compare to other values in that cateogory (if there is more than one)?</p>
+<p>Consider this graph. It shows the spread of GDP per capita across countries within continents, in 2007. Thus in this graph, each observation (point) represents the GDP per capita for one country within the specified continent along the x-axis. Consider the beeswarm for Africa. It looks like a number of observations are clustered around 1000 GDP per capita, and another smaller cluster is around 10,000 GDP per capita.</p>
+</div>
+<div id="presentation-tips" class="section level3">
+<h3>Presentation tips:</h3>
+<p><strong>Annotation</strong>: Annotation can be used to indicate certain important points in the beeswarm, or to show an overall comparison value. Here, we didn’t make use of annotation.</p>
+<p><strong>Color</strong>: Color can be used to layer on another variable to the beeswarm. We didn’t make that use of color here, but did color all the points one color to make it prettier and easier to read. Additionally, since there are many data points in each beeswarm, I used <code>alpha = .6</code> to make the color semiopaque, so that overlap of points was more clear.</p>
+<p><strong>Arrangement</strong>: Here, we used a log scale for the y-axis, since this data had such a large spread. This allows us to see the points more clearly. Without it they are “bunched up”. You can also vary the arrangement of points using the “smiley” method discussed below.</p>
+</div>
+<div id="variations-and-alternatives" class="section level3">
+<h3>Variations and alternatives:</h3>
+<p>There is one main variation I’m aware of which is adding the “smiley method”. You can add that with <code>geom_quasirandom(method = &quot;smiley&quot;)</code>. This creates sort of “rows” of dots in the beeswarm, which can make the presentation neater.</p>
+</div>
+<div id="how-i-created-it" class="section level3">
+<h3>How I created it:</h3>
+<p>I used ggplot2 in R, and the ggbeeswarm package. I created the x- and y- variables using <code>aes(x = continent, y = gdpPercap)</code>. Then, I was able to create a ggplot with a beeswarm using the <code>geom_quasirandom()</code> layer. Then I layered on the log scale for the y-axis with <code>scale_y_log10(labels = comma)</code> (the <code>labels = comma</code> part wrote out the y-values fully instead of using scientific notation). Finally, I added the x- and y-axis labels and the title using <code>labs()</code> and <code>ggtitle()</code> respectively.</p>
+</div>
+</div>
+
+
+                <br>
+            </div>
+            
+            <div class="share">
+                  
+                  <a href="" class="ssk ssk-facebook"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-twitter"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-google-plus"></a>
+                  
+                  
+                  <a href="" class="ssk ssk-linkedin"></a>
+                  
+            </div>
+            
+            
+                <div class="navigation">
+                    
+                    <div>
+                        <img class="icon" src="/img/back.svg" alt="back" />
+                        <a href="/blog/salem_3-edited/">SALEM_3 Edited</a>
+                    </div>
+                    
+                    <div style="width: 100%;"></div>
+                    
+                    <div>
+                        <a href="/blog/salem_1-edited/">SALEM_1 Edited</a>
+                        <img class="icon" src="/img/next.svg" alt="next" />
+                    </div>
+                    
+                </div>
+            
+            <br>
+            <div class="disqus">
+                
+            </div>
+            
         </div>
     </div>
 </div>
+
 <div class="footer column">
     <div class="container">
 
