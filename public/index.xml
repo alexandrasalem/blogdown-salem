@@ -121,5 +121,14 @@ Copyright &amp;copy; 2015 Nishanth Shanmughamnishanth.gerrard@gmail.com
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &amp;ldquo;Software&amp;rdquo;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</description>
     </item>
     
+    <item>
+      <title>SALEM_1 Edited</title>
+      <link>/blog/salem_1-edited/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/salem_1-edited/</guid>
+      <description>Preliminary Information: Loading libraries: library(dplyr) library(ggplot2) library(gapminder) library(skimr) library(scales)  Original question: Report the absolute and/or relative abundance of countries with low life expectancy over time by continent: Compute some measure of worldwide life expectancy - you decide - a mean or median or some other quantile or perhaps your current age. Then determine how many countries on each continent have a life expectancy less than this benchmark, for each year.</description>
+    </item>
+    
   </channel>
 </rss>

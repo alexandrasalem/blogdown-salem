@@ -1,0 +1,143 @@
+---
+title: "SALEM_1 Edited"
+output: html_document
+author: "Alex Salem"
+date: 05/02/2018
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##Preliminary Information:
+
+###Loading libraries:
+```{r message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(gapminder)
+library(skimr)
+library(scales)
+```
+
+###Original question:
+Report the absolute and/or relative abundance of countries with low life expectancy over time by continent: Compute some measure of worldwide life expectancy - you decide - a mean or median or some other quantile or perhaps your current age. Then determine how many countries on each continent have a life expectancy less than this benchmark, for each year.
+
+###EDA:
+```{r}
+gapminder
+
+glimpse(gapminder)
+```
+
+
+###Creating original data frame:
+```{r}
+gapminder_with_median <- gapminder %>% 
+  mutate(median_life_expectancy_worldwide = median(lifeExp)) %>% 
+  mutate(lower_than_worldwide = case_when(lifeExp < median_life_expectancy_worldwide ~ TRUE,
+                                          lifeExp >= median_life_expectancy_worldwide ~FALSE))
+```
+
+###Editing original data frame:
+```{r}
+countries_low_exp <- gapminder_with_median %>% 
+  group_by(year, continent) %>% 
+  filter(lower_than_worldwide == TRUE) %>% 
+  count(lower_than_worldwide)
+
+countries_low_exp
+```
+
+###Original graph:
+```{r}
+ggplot(countries_low_exp, aes(x = year, y = n)) +
+  geom_col() +
+  labs(x = "Year", y = "Number of Countries with \nLow Life Expectancy") +
+  ggtitle("Number of countries with life expectancy lower than the median \nacross continents", subtitle = "")+
+  facet_wrap(~continent)
+```
+
+###Original criticism:
+I think this graph needs a slightly different comparison measurement for life expectancy. I think this graph would have been better if I instead measured against the median life expectancy of each distinct year. That would've given a more accurate representation of how many countries had a low life expectancy relative to others.
+
+###New data frame and graph:
+
+```{r}
+#adding column for this new mean by year:
+gapminder_with_new_measure <- gapminder %>% 
+  group_by(year) %>% 
+  mutate(mean_life_expectancy_by_year = mean(lifeExp)) %>% 
+  mutate(lower_than_mean = case_when(lifeExp < mean_life_expectancy_by_year ~ TRUE,
+                                          lifeExp >= mean_life_expectancy_by_year ~FALSE)) %>% 
+    arrange(year)
+
+#using count and add_count to count the number of countries within each continent with low life expectancy
+new_countries_low_life_exp <- gapminder_with_new_measure %>% 
+  count(year, continent, lower_than_mean) %>% 
+  add_count(year, continent, wt = n) %>% 
+  rename(
+    # new = old
+    number_lower_higher = n, 
+    total = nn
+  )
+
+new_countries_low_life_exp
+
+#normalizing by number of countries
+#note: did the 1-() here because I want the continents with 0 low life exp countries to still show up in the data. This works because later I filter lower_than_mean == FALSE.
+new_countries_low_life_exp_proportional <- new_countries_low_life_exp %>% 
+  mutate(lower_proportional = 1-(number_lower_higher/total)) %>% 
+  arrange(lower_than_mean, continent, year)
+  
+glimpse(new_countries_low_life_exp_proportional)
+
+#the plot:
+ggplot(filter(new_countries_low_life_exp_proportional, lower_than_mean == FALSE), aes(x = year, y = lower_proportional, color = continent)) +
+  geom_point(alpha = .5) +
+  geom_line(alpha = .5) +
+  labs(x = "Year", y = "Proportion of Countries with \nLow Life Expectancy") +
+  ggtitle("Proportion of countries within each continent with life expectancy \nlower than the mean of that year, across time", subtitle = "")
+```
+
+###Changes I made:
+* Changed the measure of overall life expectancy for comparison from overall *median* over all years to individual *mean* by year. 
+* Changed the measure from *number* of countries with low life expectancy to *proportion* of countries with low life expectancy, so that the difference in number of countries in each continent wouldn't affect the results.
+* Changed the way the proportion was calculated so that values with a proportion of 0.00 would show up in the data.
+* Changed the plot used from a bar chart to a scatter plot.
+
+##Graph Brief:
+
+###Type of Graph:
+This graph is a *scatter plot* with the addition of tread lines.
+
+###Data:
+The data comes from the gapminder data set. This data set has 6 variables: country, continent, year, lifeExp (life expectation), population, and gdpPercap (GDP per capita). There are 1704 total observations.
+
+###Audience:
+Here, I am aiming for a fairly general audience--anyone with familiarity with scatter plots and mean. No previous knowledge about this specific data is required.
+
+###Representation Description:
+Scatter plots are used to show the relationship between two variables. One variable is on the x-axis and another is on the y-axis. For each point in a scatter plot, the horizontal position indicates its x-axis value and the vertical height represents its y-axis value. Tread lines or lines of best fit can be used to show the pattern between these two variables more clearly, and color can be used to add another variable layer to the plot.
+
+Consider this specific scatter plot. The title of this graph is "Proportion of countries within each continent with life expectancy lower than the mean of that year, across time". The x-axis is "Year" and the y-axis is "Proportion of Countries with Low Life Expectancy". This graph has 5 colored sets of points with tread lines, one for each continent. 
+
+This graph shows the relationship between year and low life expectancy for each continent. Consider, for instance, the Americas. In the 1950s, around 37% of countries in the Americas had a life expectancy lower than the world-wide mean. However, by the 2000s, only about 7% of countries in the Americas had that low life expectancy. 
+
+###How to read it & What to look for:
+A newbie should first pay special attention to the title and x- and y-axis labels. This should indicate what kind of relationship the graph is trying to show. Then, the viewer should identify some specific points, and look at their x- and y-values, to get a sense of how to read the graph. Finally, the viewer should look at the overall relationship shown--how does the change along the x-axis affect the change along the y-axis? 
+
+###Presentation tips: 
+**Annotation**: Annotation can be used on a scatter plot to point out a specific point of importance or to show an overall comparison value. In our graph we don't make use of annotation.
+
+**Color**: Color can be used on a scatter plot to add another variable layer. Scatter plots automatically have an x and y variable, but then the relationship between these variables and a third one can be added by coloring sets of points by a third variable. For instance, in our graph we color the points by continent. Thus, we not only see the relationship between year and life expectancy, but we see it *across* continents.
+
+**Size**: Size can also be used like color to add on another variable layer. You can vary the size of the points in the scatter point to indicate their position within a third variable.
+
+**Arrangement**: Scale can be used to vary how "close together" points seem. Here, we just take the automatic scale created by ggplot. However, we could have zoomed out or added more tick marks to vary the perception of the relationship.
+
+
+###Variations and alternatives: 
+There are some variations of scatter plots. Here, we included tread lines to show the relationship between year and low life expectancy more clearly, but some scatter plots don't include tread lines. Additionally, adding tread lines here only worked since we had one dot for each discrete value along the x-axis (year), for each continent. This doesn't have to be true for scatter plots--the x- and y-axis are often both continous variables and could have multiple dots at the same x-value. Often, a line of best fit is better for showing the relationship.
+
+###How I created it: 
+I made this plot using ggplot2 in R. I used a global aesthetic mapping where year was on the x-axis, proportion of countries with low life expectancy was on the y-axis, and the points were colored by continent: `aes(x = year, y = lower_proportional, color = continent)`. I then layered on `geom_point(alpha = .5)` and `geom_line(alpha = .5)` to create the points and the tread lines. The alpha value was used to show the layering of points. Then, I added the x- and y-axis labels, and the title, using `labs()` and `ggtitle()` respectively.
