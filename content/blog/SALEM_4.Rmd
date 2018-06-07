@@ -1,7 +1,7 @@
 ---
-title: "SALEM_4 Edited"
+title: "Guns in the Pacific Northwest"
 author: "Alex Salem"
-date: "May 13, 2018"
+date: 2018-05-13
 output: html_document
 ---
 ##Preliminary information:

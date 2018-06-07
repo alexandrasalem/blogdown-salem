@@ -1,8 +1,8 @@
 ---
-title: "SALEM_1 Edited"
+title: "Countries with low life expectancy"
 output: html_document
 author: "Alex Salem"
-date: 05/02/2018
+date: 2018-05-02
 ---
 
 ```{r setup, include=FALSE}

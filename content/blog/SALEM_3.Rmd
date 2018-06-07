@@ -1,7 +1,7 @@
 ---
-title: "SALEM_3 Edited"
+title: "Age of Paintings in the MoMA"
 author: "Alex Salem"
-date: "May 12, 2018"
+date: 2018-05-12
 output: html_document
 ---
 
