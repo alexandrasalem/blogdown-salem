@@ -6,10 +6,20 @@
     <description>Recent content on Alex Salem&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 13 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 17 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Sun, 17 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>My name is Alex Salem and I&amp;rsquo;m a Research Assistant for the Center for Spoken Language Understanding (CSLU) at the Oregon Health &amp;amp; Science University (OHSU). I am also a part-time master&amp;rsquo;s student in the Computer Science &amp;amp; Electrical Engineering department, which is the education program for CSLU.
+I have a B.A. in Mathematics from Reed College in Portland, OR. My main interests are Natural Language Processing, Data Science, and Environmental Research.</description>
+    </item>
     
     <item>
       <title>Guns in the Pacific Northwest</title>
@@ -61,17 +71,6 @@ library(here) library(tidyverse) library(readr) library(ggthemes) Original data 
       <description>Along with Ford Prefect, Dent barely escapes the Earth&amp;rsquo;s destruction as it is demolished to make way for a hyperspace bypass. Arthur spends the next several years, still wearing his dressing gown, helplessly launched from crisis to crisis while trying to straighten out his lifestyle.
  He rather enjoys tea, but seems to have trouble obtaining it in the far reaches of the galaxy.
  In time, he learns how to fly and carves a niche for himself as a sandwich-maker.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>/about/</link>
-      <pubDate>Sat, 22 Aug 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/about/</guid>
-      <description>With this theme, it is possible to add small sections that only contains one page like this. It will automatically appears in the header, at the end.
-Hello there!
-My name is Alex Salem. I am a Research Assistant for the Center for Spoken Language Understanding (CSLU) at the Oregon Health &amp;amp; Science University (OHSU). I am also a part-time master&amp;rsquo;s student in the Computer Science &amp;amp; Electrical Engineering department, which is the education program for CSLU.</description>
     </item>
     
     <item>
