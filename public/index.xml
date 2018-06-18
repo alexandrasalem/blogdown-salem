@@ -89,7 +89,7 @@ library(here) library(tidyverse) library(readr) library(ggthemes) Original data 
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/home/</guid>
-      <description>Here are some slides: here here2</description>
+      <description>Here are my tolstoy slides: here</description>
     </item>
     
     <item>

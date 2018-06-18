@@ -1,0 +1,153 @@
+---
+title: "Sentimental Analysis of Tolstoy"
+author: "Alex Salem"
+date: "June 17, 2018"
+output: xaringan::moon_reader
+---
+
+#Introduction
+Goal: Create a graph showing sentiment analysis of three Tolstoy novels over his career.
+  - I.e., evaluate the relative *positivity* and *negativity* of words in Tolstoy's novels
+  
+Inspired by Julia Silge's [sentiment analysis of Jane Austen novels](https://juliasilge.com/blog/life-changing-magic/).
+
+Hypothesis: Tolstoy's last novel, *Resurrection*, will have a different sentiment pattern than his others.
+
+---
+#Description of the Data
+Full text of three novels by Leo Tolstoy:
+  - *Childhood* (1852), translated into English by C.J. Hogarth
+  - *Anna Karenina* (1877), translated into English by Constance Garnett
+  - *Resurrection* (1899), translated into English by Mrs. Louise Maude
+
+Plaintext copies pulled from [Project Gutenburg.](http://www.gutenberg.org/)
+
+Data cleaned and processed using `Python`, then read into R:
+```{r, message=FALSE, echo = FALSE}
+library(readr)
+library(tidytext)
+library(tidyverse)
+library(viridis)
+```
+```{r, echo = FALSE}
+anna_karenina<- read_csv("anna_karenina.csv", col_types = cols(title = col_factor(levels = NULL)))
+childhood <- read_csv("childhood.csv", col_types = cols(title = col_factor(levels = NULL)))
+resurrection<- read_csv("resurrection.csv", col_types = cols(title = col_factor(levels = NULL)))
+```
+
+```{r, echo = FALSE}
+anna_karenina <- anna_karenina %>% 
+  rownames_to_column()
+
+childhood <- childhood %>% 
+  rownames_to_column()
+
+resurrection <- resurrection %>% 
+  rownames_to_column()
+
+```
+
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
+data <- bind_rows(childhood, anna_karenina, resurrection)
+```
+
+```{r}
+glimpse(data)
+```
+
+---
+#Description of the Data
+This data was then combined with the `tidytext::get_sentiments()` function, which has an assignment of sentiment values to words:
+
+```{r}
+glimpse(get_sentiments("bing"))
+```
+
+---
+#Methods
+Combined the text data with the sentiment data as follows:
+```{r, echo = FALSE}
+data_final<- data %>% 
+  group_by(title) %>% 
+  inner_join(get_sentiments("bing"), by = c("words" = "word")) %>% 
+  count(title, index = as.numeric(rowname)%/%max(as.numeric(rowname)/40), sentiment) %>%
+  filter(as.numeric(index)!=40) %>% 
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive/(positive+negative))
+
+data_final$title<- fct_relevel(data_final$title, "childhood")
+```
+- Join sentiment values (either "positive" or "negative") to words in `data`
+- Divide each novel's data into 40 sections, then count number of positive and negative words in each section 
+- Calculate the ratio of positive words to positive and negative words
+```{r}
+head(data_final)
+```
+
+```{r, echo = FALSE}
+labels <- c(childhood = "Childhood, 1852", anna_karenina = "Anna Karenina, 1877", resurrection = "Resurrection, 1899")
+
+plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
+  geom_point(size = .8, show.legend = FALSE) +
+  geom_hline(aes(yintercept=.5))+
+  geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
+  facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
+  ggtitle("Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory", subtitle = "Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio > 0.5 indicates more positive than negative words \nSentiment Ratio < 0.5 indicates more negative than positive words      ") +
+  labs(x = "Plot Trajectory", y = "Sentiment Ratio")+
+  expand_limits(y=c(0,1)) +
+  scale_color_viridis(discrete = TRUE, name = "Book", labels = labels) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "italic")) +
+  theme(axis.ticks.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  theme(legend.position = "bottom")
+
+```
+
+---
+#Final Visualization: Lollipop Plot
+```{r, echo = FALSE}
+plot
+``` 
+
+---
+#Methods
+- Use `geom_point()`, `geom_hline()`, and `geom_segment` to create the lollipops
+- `facet_wrap()` by title, relabel with nice names
+- Add axis labels and title/subtitle, change colors and legend
+
+--
+
+```{r}
+labels <- c(childhood = "Childhood, 1852", anna_karenina = "Anna Karenina, 1877", resurrection = "Resurrection, 1899")
+
+plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
+  geom_point(size = .8, show.legend = FALSE) +
+  geom_hline(aes(yintercept=.5))+
+  geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
+  facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
+  ggtitle("Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory", subtitle = "Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio > 0.5 indicates more positive than negative words \nSentiment Ratio < 0.5 indicates more negative than positive words      ") +
+  labs(x = "Plot Trajectory", y = "Sentiment Ratio")+
+  expand_limits(y=c(0,1)) +
+  scale_color_viridis(discrete = TRUE, name = "Book", labels = labels) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "italic")) +
+  theme(axis.ticks.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  theme(legend.position = "bottom")
+
+```
+
+---
+#References
+https://machinelearningmastery.com/clean-text-machine-learning-python/
+
+https://www.tidytextmining.com/sentiment.html
+
+https://juliasilge.com/blog/life-changing-magic/
+
+https://python-graph-gallery.com/lollipop-plot/
+
+---
+class: center, middle
+#Thank you!

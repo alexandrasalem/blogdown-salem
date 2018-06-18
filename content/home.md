@@ -2,5 +2,4 @@
 title = "Home"
 +++
 
-Here are some slides: [here](slides/Tada.html)
-[here2](slides/tolstoy_brief.html)
+Here are my tolstoy slides: [here](slides/sentimental_analysis_of_tolstoy.html)
