@@ -1,7 +1,7 @@
 ---
 title: "A Sentimental Analysis of Tolstoy"
 author: "Alex Salem"
-date: 2018-06-18
+date: "June 18, 2018"
 output: html_document
 ---
 
@@ -15,7 +15,12 @@ output: html_document
 </div>
 <div id="description-of-the-data" class="section level2">
 <h2>Description of the Data</h2>
-<p>Full text of three novels by Leo Tolstoy: * <em>Childhood</em> (1852), translated into English by C.J. Hogarth * <em>Anna Karenina</em> (1877), translated into English by Constance Garnett * <em>Resurrection</em> (1899), translated into English by Mrs. Louise Maude</p>
+<p>Full text of three novels by Leo Tolstoy:</p>
+<ul>
+<li><em>Childhood</em> (1852), translated into English by C.J. Hogarth</li>
+<li><em>Anna Karenina</em> (1877), translated into English by Constance Garnett</li>
+<li><em>Resurrection</em> (1899), translated into English by Mrs. Louise Maude</li>
+</ul>
 <p>Plaintext copies pulled from <a href="http://www.gutenberg.org/">Project Gutenburg.</a></p>
 <p>Data cleaned and processed using <code>Python</code>:</p>
 <pre class="python"><code>import csv
@@ -124,15 +129,15 @@ bad_plot&lt;- ggplot(bad_data, aes(index, sentiment, fill = title)) +
 <pre class="r"><code>data_final&lt;- data %&gt;% 
   group_by(title) %&gt;% 
   inner_join(get_sentiments(&quot;bing&quot;), by = c(&quot;words&quot; = &quot;word&quot;)) %&gt;% 
-  count(title, index = as.numeric(rowname)%/%max(as.numeric(rowname)/50), sentiment) %&gt;%
-  filter(as.numeric(index)!=50) %&gt;% 
+  count(title, index = as.numeric(rowname)%/%max(as.numeric(rowname)/40), sentiment) %&gt;%
+  filter(as.numeric(index)!=40) %&gt;% 
   spread(sentiment, n, fill = 0) %&gt;%
   mutate(sentiment = positive/(positive+negative))
 
 data_final$title&lt;- fct_relevel(data_final$title, &quot;childhood&quot;)</code></pre>
 <ul>
 <li>Join sentiment values (either “positive” or “negative”) to words in <code>data</code></li>
-<li>Divide data into 50 sections, count number of positive and negative words in each section</li>
+<li>Divide data into 40 sections, count number of positive and negative words in each section</li>
 <li>Calculate the ratio of positive words to positive and negative words</li>
 </ul>
 <pre class="r"><code>head(data_final)</code></pre>
@@ -140,12 +145,12 @@ data_final$title&lt;- fct_relevel(data_final$title, &quot;childhood&quot;)</code
 ## # Groups:   title [1]
 ##   title         index negative positive sentiment
 ##   &lt;fct&gt;         &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-## 1 anna_karenina     0      246      242     0.496
-## 2 anna_karenina     1      166      259     0.609
-## 3 anna_karenina     2      202      302     0.599
-## 4 anna_karenina     3      176      288     0.621
-## 5 anna_karenina     4      175      251     0.589
-## 6 anna_karenina     5      238      218     0.478</code></pre>
+## 1 anna_karenina     0      289      300     0.509
+## 2 anna_karenina     1      222      350     0.612
+## 3 anna_karenina     2      230      375     0.620
+## 4 anna_karenina     3      224      317     0.586
+## 5 anna_karenina     4      299      256     0.461
+## 6 anna_karenina     5      272      308     0.531</code></pre>
 </div>
 <div id="methods" class="section level2">
 <h2>Methods</h2>
@@ -175,10 +180,8 @@ plot &lt;- ggplot(data_final, aes(index, sentiment, color =  title)) +
 </div>
 <div id="the-plot" class="section level2">
 <h2>The plot</h2>
-<pre><code>## function (x, y, ...) 
-## UseMethod(&quot;plot&quot;)
-## &lt;bytecode: 0x7fb2f2895368&gt;
-## &lt;environment: namespace:graphics&gt;</code></pre>
+<pre class="r"><code>plot</code></pre>
+<p><img src="/projects/tolstoy_brief_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="audience-description" class="section level2">
 <h2>Audience Description</h2>

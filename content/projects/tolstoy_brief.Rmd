@@ -1,7 +1,7 @@
 ---
 title: "A Sentimental Analysis of Tolstoy"
 author: "Alex Salem"
-date: 2018-06-18
+date: "June 18, 2018"
 output: html_document
 ---
 ##Introduction
@@ -13,9 +13,10 @@ Hypothesis: Tolstoy's last novel, *Resurrection*, will have a different sentimen
 
 ##Description of the Data
 Full text of three novels by Leo Tolstoy:
-  * *Childhood* (1852), translated into English by C.J. Hogarth
-  * *Anna Karenina* (1877), translated into English by Constance Garnett
-  * *Resurrection* (1899), translated into English by Mrs. Louise Maude
+
+- *Childhood* (1852), translated into English by C.J. Hogarth
+- *Anna Karenina* (1877), translated into English by Constance Garnett
+- *Resurrection* (1899), translated into English by Mrs. Louise Maude
 
 Plaintext copies pulled from [Project Gutenburg.](http://www.gutenberg.org/)
 
@@ -125,15 +126,15 @@ bad_plot
 data_final<- data %>% 
   group_by(title) %>% 
   inner_join(get_sentiments("bing"), by = c("words" = "word")) %>% 
-  count(title, index = as.numeric(rowname)%/%max(as.numeric(rowname)/50), sentiment) %>%
-  filter(as.numeric(index)!=50) %>% 
+  count(title, index = as.numeric(rowname)%/%max(as.numeric(rowname)/40), sentiment) %>%
+  filter(as.numeric(index)!=40) %>% 
   spread(sentiment, n, fill = 0) %>%
   mutate(sentiment = positive/(positive+negative))
 
 data_final$title<- fct_relevel(data_final$title, "childhood")
 ```
 - Join sentiment values (either "positive" or "negative") to words in `data`
-- Divide data into 50 sections, count number of positive and negative words in each section
+- Divide data into 40 sections, count number of positive and negative words in each section
 - Calculate the ratio of positive words to positive and negative words
 
 ```{r}
@@ -146,7 +147,7 @@ head(data_final)
 - `facet_wrap()` by title, relabel with nice names
 - Add axis labels and title/subtitle
 - Change colors and legend
-```{r, eval = FALSE}
+```{r}
 labels <- c(childhood = "Childhood, 1852", anna_karenina = "Anna Karenina, 1877", resurrection = "Resurrection, 1899")
 
 plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
@@ -168,7 +169,7 @@ plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
 ```
 
 ##The plot
-```{r, echo = FALSE}
+```{r}
 plot
 ``` 
 
