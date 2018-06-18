@@ -1,0 +1,217 @@
+---
+title: "A Sentimental Analysis of Tolstoy"
+author: "Alex Salem"
+date: 2018-06-18
+output: html_document
+---
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Goal: Create a graph showing sentiment analysis of three Tolstoy novels over his career.</p>
+<p>Inspired by Julia Silge’s <a href="https://juliasilge.com/blog/life-changing-magic/">sentiment analysis of Jane Austen novels</a>.</p>
+<p>Hypothesis: Tolstoy’s last novel, <em>Resurrection</em>, will have a different sentiment pattern than his others.</p>
+</div>
+<div id="description-of-the-data" class="section level2">
+<h2>Description of the Data</h2>
+<p>Full text of three novels by Leo Tolstoy: * <em>Childhood</em> (1852), translated into English by C.J. Hogarth * <em>Anna Karenina</em> (1877), translated into English by Constance Garnett * <em>Resurrection</em> (1899), translated into English by Mrs. Louise Maude</p>
+<p>Plaintext copies pulled from <a href="http://www.gutenberg.org/">Project Gutenburg.</a></p>
+<p>Data cleaned and processed using <code>Python</code>:</p>
+<pre class="python"><code>import csv
+from nltk import word_tokenize
+
+def clean(infilename, outfilename):
+    title = outfilename[:-4]
+    with open(infilename, &quot;r&quot;) as f:
+        text = f.read()
+
+    tokens = word_tokenize(text)
+    tokens = [w.lower() for w in tokens]
+    print(tokens[:100])
+    words = [word for word in tokens if word.isalpha()]
+    print(words[:100])
+
+    with open(outfilename, &quot;w&quot;) as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow([&quot;title&quot;, &quot;words&quot;])
+        for word in words:
+            writer.writerow([title, word])
+
+names = [[&quot;anna_karenina_clean.txt&quot;, &quot;anna_karenina.csv&quot;], [&quot;boyhood_clean.txt&quot;, &quot;boyhood.csv&quot;], 
+        [&quot;childhood_clean.txt&quot;, &quot;childhood.csv&quot;], [&quot;cossacks_clean.txt&quot;, &quot;cossacks.csv&quot;],
+        [&quot;resurrection_clean.txt&quot;, &quot;resurrection.csv&quot;], [&quot;war_and_peace_clean.txt&quot;, &quot;war_and_peace.csv&quot;],
+        [&quot;youth_clean.txt&quot;, &quot;youth.csv&quot;]]
+
+for name in names:
+    clean(name[0], name[1])</code></pre>
+<p>Then read into R.</p>
+<p>Used the following libraries:</p>
+<pre class="r"><code>library(readr)
+library(tidytext)
+library(tidyverse)
+library(viridis)</code></pre>
+<p>Then read in the csvs:</p>
+<pre class="r"><code>anna_karenina&lt;- read_csv(&quot;anna_karenina.csv&quot;, col_types = cols(title = col_factor(levels = NULL)))
+childhood &lt;- read_csv(&quot;childhood.csv&quot;, col_types = cols(title = col_factor(levels = NULL)))
+resurrection&lt;- read_csv(&quot;resurrection.csv&quot;, col_types = cols(title = col_factor(levels = NULL)))</code></pre>
+<p>Added a column with the row number of each word:</p>
+<pre class="r"><code>anna_karenina &lt;- anna_karenina %&gt;% 
+  rownames_to_column()
+
+childhood &lt;- childhood %&gt;% 
+  rownames_to_column()
+
+resurrection &lt;- resurrection %&gt;% 
+  rownames_to_column()</code></pre>
+<p>Then, combined rows into one data frame:</p>
+<pre class="r"><code>data &lt;- bind_rows(childhood, anna_karenina, resurrection)</code></pre>
+<pre class="r"><code>glimpse(data)</code></pre>
+<pre><code>## Observations: 564,231
+## Variables: 3
+## $ rowname &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;10&quot;, &quot;11...
+## $ title   &lt;chr&gt; &quot;childhood&quot;, &quot;childhood&quot;, &quot;childhood&quot;, &quot;childhood&quot;, &quot;c...
+## $ words   &lt;chr&gt; &quot;the&quot;, &quot;tutor&quot;, &quot;karl&quot;, &quot;ivanitch&quot;, &quot;on&quot;, &quot;the&quot;, &quot;of&quot;,...</code></pre>
+<pre class="r"><code>head(data)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   rowname title     words   
+##   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   
+## 1 1       childhood the     
+## 2 2       childhood tutor   
+## 3 3       childhood karl    
+## 4 4       childhood ivanitch
+## 5 5       childhood on      
+## 6 6       childhood the</code></pre>
+<p>The <code>tidytext::get_sentiments()</code> function assigns sentiment values to words:</p>
+<pre class="r"><code>glimpse(get_sentiments(&quot;bing&quot;))</code></pre>
+<pre><code>## Observations: 6,788
+## Variables: 2
+## $ word      &lt;chr&gt; &quot;2-faced&quot;, &quot;2-faces&quot;, &quot;a+&quot;, &quot;abnormal&quot;, &quot;abolish&quot;, &quot;...
+## $ sentiment &lt;chr&gt; &quot;negative&quot;, &quot;negative&quot;, &quot;positive&quot;, &quot;negative&quot;, &quot;neg...</code></pre>
+</div>
+<div id="first-visualization" class="section level2">
+<h2>First Visualization</h2>
+<p>Creating the data frame:</p>
+<pre class="r"><code>bad_data &lt;- data %&gt;% 
+  inner_join(get_sentiments(&quot;bing&quot;), by = c(&quot;words&quot; = &quot;word&quot;)) %&gt;%
+  count(title, index = as.numeric(rowname)%/%2000, sentiment) %&gt;%
+  spread(sentiment, n, fill = 0) %&gt;%
+  mutate(sentiment = positive - negative)
+
+bad_plot&lt;- ggplot(bad_data, aes(index, sentiment, fill = title)) +
+  geom_bar(stat = &quot;identity&quot;, show.legend = FALSE) +
+  facet_wrap(~title, ncol = 3, scales = &quot;free_x&quot;)</code></pre>
+<ul>
+<li>Join sentiment values (either “positive” or “negative”) to words in <code>data</code></li>
+<li>Count number of positive and negative words, per 2000 words</li>
+<li>Calculate the difference between those counts, per 2000 words</li>
+</ul>
+<pre class="r"><code>head(bad_data)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   title         index negative positive sentiment
+##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 anna_karenina     0       68       63        -5
+## 2 anna_karenina     1       66       72         6
+## 3 anna_karenina     2       93       56       -37
+## 4 anna_karenina     3       43       83        40
+## 5 anna_karenina     4       43       74        31
+## 6 anna_karenina     5       44       55        11</code></pre>
+<pre class="r"><code>bad_plot</code></pre>
+<p><img src="/projects/tolstoy_brief_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="description-of-the-data-1" class="section level2">
+<h2>Description of the Data</h2>
+<pre class="r"><code>data_final&lt;- data %&gt;% 
+  group_by(title) %&gt;% 
+  inner_join(get_sentiments(&quot;bing&quot;), by = c(&quot;words&quot; = &quot;word&quot;)) %&gt;% 
+  count(title, index = as.numeric(rowname)%/%max(as.numeric(rowname)/50), sentiment) %&gt;%
+  filter(as.numeric(index)!=50) %&gt;% 
+  spread(sentiment, n, fill = 0) %&gt;%
+  mutate(sentiment = positive/(positive+negative))
+
+data_final$title&lt;- fct_relevel(data_final$title, &quot;childhood&quot;)</code></pre>
+<ul>
+<li>Join sentiment values (either “positive” or “negative”) to words in <code>data</code></li>
+<li>Divide data into 50 sections, count number of positive and negative words in each section</li>
+<li>Calculate the ratio of positive words to positive and negative words</li>
+</ul>
+<pre class="r"><code>head(data_final)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+## # Groups:   title [1]
+##   title         index negative positive sentiment
+##   &lt;fct&gt;         &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 anna_karenina     0      246      242     0.496
+## 2 anna_karenina     1      166      259     0.609
+## 3 anna_karenina     2      202      302     0.599
+## 4 anna_karenina     3      176      288     0.621
+## 5 anna_karenina     4      175      251     0.589
+## 6 anna_karenina     5      238      218     0.478</code></pre>
+</div>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<ul>
+<li>Use <code>geom_point()</code>, <code>geom_hline()</code>, and <code>geom_segment</code> to create the lollipops</li>
+<li><code>facet_wrap()</code> by title, relabel with nice names</li>
+<li>Add axis labels and title/subtitle</li>
+<li>Change colors and legend</li>
+</ul>
+<pre class="r"><code>labels &lt;- c(childhood = &quot;Childhood, 1852&quot;, anna_karenina = &quot;Anna Karenina, 1877&quot;, resurrection = &quot;Resurrection, 1899&quot;)
+
+plot &lt;- ggplot(data_final, aes(index, sentiment, color =  title)) +
+  geom_point(size = .8, show.legend = FALSE) +
+  geom_hline(aes(yintercept=.5))+
+  geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
+  facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
+  ggtitle(&quot;Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory&quot;, subtitle = &quot;Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio &gt; 0.5 indicates more positive than negative words \nSentiment Ratio &lt; 0.5 indicates more negative than positive words      &quot;) +
+  labs(x = &quot;Plot Trajectory&quot;, y = &quot;Sentiment Ratio&quot;)+
+  expand_limits(y=c(0,1)) +
+  scale_color_viridis(discrete = TRUE, name = &quot;Book&quot;, labels = labels) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = &quot;italic&quot;)) +
+  #theme(axis.title.x=element_blank()) +
+  theme(axis.ticks.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  theme(legend.position = &quot;bottom&quot;)</code></pre>
+</div>
+<div id="the-plot" class="section level2">
+<h2>The plot</h2>
+<pre><code>## function (x, y, ...) 
+## UseMethod(&quot;plot&quot;)
+## &lt;bytecode: 0x7fb2f2895368&gt;
+## &lt;environment: namespace:graphics&gt;</code></pre>
+</div>
+<div id="audience-description" class="section level2">
+<h2>Audience Description</h2>
+<p>I am aiming for a general audience–but hopefully readers of Tolstoy. :)</p>
+</div>
+<div id="graph-type-description" class="section level2">
+<h2>Graph Type Description</h2>
+<p>This graph is a <em>lollipop plot</em>. A lollipop plot is a hybrid of a <em>scatter plot</em> and a <em>bar chart</em>.</p>
+<p>It shows the relationship between a numeric variable and a categorical or numeric variable. It can also be used to highlight the distace from a certain value–here 0.5, indicating an equal number of positive and negative words.</p>
+</div>
+<div id="representation-description" class="section level2">
+<h2>Representation Description</h2>
+<p>This plot shows the relationship between Sentiment Ratio and Plot Trajectory across three Tolstoy novels.</p>
+<p>We can use this to get a sense of the “positivity” and “negativity” in Tolstoy’s novels over his career. In particular, we can see that <em>Childhood</em> and <em>Anna Karenina</em> are overall more positive than <em>Resurrection</em>.</p>
+</div>
+<div id="how-to-read-it-what-to-look-for" class="section level2">
+<h2>How to read it &amp; what to look for</h2>
+<ul>
+<li>Title and x- and y- axes</li>
+<li>Baseline value the lollipops are extending from</li>
+<li>Look at one lollipop</li>
+<li>Analyze the general shape</li>
+</ul>
+</div>
+<div id="presentation-description" class="section level2">
+<h2>Presentation Description</h2>
+<p>Color is used here to distinguish between the three novels.</p>
+<p>Additionally, the three novels are arranged by <em>year</em> the novel was written, with his earliest novel on the left, and his last novel on the right.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p><a href="https://machinelearningmastery.com/clean-text-machine-learning-python/" class="uri">https://machinelearningmastery.com/clean-text-machine-learning-python/</a></p>
+<p><a href="https://www.tidytextmining.com/sentiment.html" class="uri">https://www.tidytextmining.com/sentiment.html</a></p>
+<p><a href="https://juliasilge.com/blog/life-changing-magic/" class="uri">https://juliasilge.com/blog/life-changing-magic/</a></p>
+<p><a href="https://python-graph-gallery.com/lollipop-plot/" class="uri">https://python-graph-gallery.com/lollipop-plot/</a></p>
+</div>

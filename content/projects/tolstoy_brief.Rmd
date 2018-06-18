@@ -1,0 +1,211 @@
+---
+title: "A Sentimental Analysis of Tolstoy"
+author: "Alex Salem"
+date: 2018-06-18
+output: html_document
+---
+##Introduction
+Goal: Create a graph showing sentiment analysis of three Tolstoy novels over his career.
+
+Inspired by Julia Silge's [sentiment analysis of Jane Austen novels](https://juliasilge.com/blog/life-changing-magic/).
+
+Hypothesis: Tolstoy's last novel, *Resurrection*, will have a different sentiment pattern than his others.
+
+##Description of the Data
+Full text of three novels by Leo Tolstoy:
+  * *Childhood* (1852), translated into English by C.J. Hogarth
+  * *Anna Karenina* (1877), translated into English by Constance Garnett
+  * *Resurrection* (1899), translated into English by Mrs. Louise Maude
+
+Plaintext copies pulled from [Project Gutenburg.](http://www.gutenberg.org/)
+
+Data cleaned and processed using `Python`:
+```{python, eval = FALSE, python.reticulate = FALSE}
+import csv
+from nltk import word_tokenize
+
+def clean(infilename, outfilename):
+	title = outfilename[:-4]
+	with open(infilename, "r") as f:
+		text = f.read()
+
+	tokens = word_tokenize(text)
+	tokens = [w.lower() for w in tokens]
+	print(tokens[:100])
+	words = [word for word in tokens if word.isalpha()]
+	print(words[:100])
+
+	with open(outfilename, "w") as csvfile:
+		writer = csv.writer(csvfile)
+		writer.writerow(["title", "words"])
+		for word in words:
+			writer.writerow([title, word])
+
+names = [["anna_karenina_clean.txt", "anna_karenina.csv"], ["boyhood_clean.txt", "boyhood.csv"], 
+		["childhood_clean.txt", "childhood.csv"], ["cossacks_clean.txt", "cossacks.csv"],
+		["resurrection_clean.txt", "resurrection.csv"], ["war_and_peace_clean.txt", "war_and_peace.csv"],
+		["youth_clean.txt", "youth.csv"]]
+
+for name in names:
+	clean(name[0], name[1])
+```
+Then read into R.
+
+Used the following libraries:
+```{r, message=FALSE}
+library(readr)
+library(tidytext)
+library(tidyverse)
+library(viridis)
+```
+
+Then read in the csvs:
+```{r}
+anna_karenina<- read_csv("anna_karenina.csv", col_types = cols(title = col_factor(levels = NULL)))
+childhood <- read_csv("childhood.csv", col_types = cols(title = col_factor(levels = NULL)))
+resurrection<- read_csv("resurrection.csv", col_types = cols(title = col_factor(levels = NULL)))
+```
+
+Added a column with the row number of each word:
+```{r}
+anna_karenina <- anna_karenina %>% 
+  rownames_to_column()
+
+childhood <- childhood %>% 
+  rownames_to_column()
+
+resurrection <- resurrection %>% 
+  rownames_to_column()
+
+```
+
+Then, combined rows into one data frame:
+```{r, message = FALSE, warning = FALSE}
+data <- bind_rows(childhood, anna_karenina, resurrection)
+```
+
+```{r}
+glimpse(data)
+head(data)
+```
+
+The `tidytext::get_sentiments()` function assigns sentiment values to words:
+
+```{r}
+glimpse(get_sentiments("bing"))
+```
+
+##First Visualization
+Creating the data frame:
+```{r}
+bad_data <- data %>% 
+  inner_join(get_sentiments("bing"), by = c("words" = "word")) %>%
+  count(title, index = as.numeric(rowname)%/%2000, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive - negative)
+
+bad_plot<- ggplot(bad_data, aes(index, sentiment, fill = title)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  facet_wrap(~title, ncol = 3, scales = "free_x")
+```
+* Join sentiment values (either "positive" or "negative") to words in `data`
+* Count number of positive and negative words, per 2000 words
+* Calculate the difference between those counts, per 2000 words
+
+```{r}
+head(bad_data)
+```
+```{r}
+bad_plot
+```
+
+
+##Description of the Data
+```{r, results="hide"}
+data_final<- data %>% 
+  group_by(title) %>% 
+  inner_join(get_sentiments("bing"), by = c("words" = "word")) %>% 
+  count(title, index = as.numeric(rowname)%/%max(as.numeric(rowname)/50), sentiment) %>%
+  filter(as.numeric(index)!=50) %>% 
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive/(positive+negative))
+
+data_final$title<- fct_relevel(data_final$title, "childhood")
+```
+- Join sentiment values (either "positive" or "negative") to words in `data`
+- Divide data into 50 sections, count number of positive and negative words in each section
+- Calculate the ratio of positive words to positive and negative words
+
+```{r}
+head(data_final)
+```
+
+
+##Methods
+- Use `geom_point()`, `geom_hline()`, and `geom_segment` to create the lollipops
+- `facet_wrap()` by title, relabel with nice names
+- Add axis labels and title/subtitle
+- Change colors and legend
+```{r, eval = FALSE}
+labels <- c(childhood = "Childhood, 1852", anna_karenina = "Anna Karenina, 1877", resurrection = "Resurrection, 1899")
+
+plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
+  geom_point(size = .8, show.legend = FALSE) +
+  geom_hline(aes(yintercept=.5))+
+  geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
+  facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
+  ggtitle("Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory", subtitle = "Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio > 0.5 indicates more positive than negative words \nSentiment Ratio < 0.5 indicates more negative than positive words      ") +
+  labs(x = "Plot Trajectory", y = "Sentiment Ratio")+
+  expand_limits(y=c(0,1)) +
+  scale_color_viridis(discrete = TRUE, name = "Book", labels = labels) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "italic")) +
+  #theme(axis.title.x=element_blank()) +
+  theme(axis.ticks.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  theme(legend.position = "bottom")
+
+```
+
+##The plot
+```{r, echo = FALSE}
+plot
+``` 
+
+
+##Audience Description
+I am aiming for a general audience--but hopefully readers of Tolstoy. :)
+
+
+##Graph Type Description
+This graph is a *lollipop plot*. A lollipop plot is a hybrid of a *scatter plot* and a *bar chart*. 
+
+It shows the relationship between a numeric variable and a categorical or numeric variable. It can also be used to highlight the distace from a certain value--here 0.5, indicating an equal number of positive and negative words.
+
+
+##Representation Description
+This plot shows the relationship between Sentiment Ratio and Plot Trajectory across three Tolstoy novels.
+
+We can use this to get a sense of the "positivity" and "negativity" in Tolstoy's novels over his career. In particular, we can see that *Childhood* and *Anna Karenina* are overall more positive than *Resurrection*.
+
+##How to read it & what to look for
+* Title and x- and y- axes
+* Baseline value the lollipops are extending from
+* Look at one lollipop
+* Analyze the general shape
+
+##Presentation Description
+Color is used here to distinguish between the three novels.
+
+Additionally, the three novels are arranged by *year* the novel was written, with his earliest novel on the left, and his last novel on the right.
+
+
+##References
+https://machinelearningmastery.com/clean-text-machine-learning-python/
+
+https://www.tidytextmining.com/sentiment.html
+
+https://juliasilge.com/blog/life-changing-magic/
+
+https://python-graph-gallery.com/lollipop-plot/
+
