@@ -143,7 +143,8 @@ head(data_final)
 
 
 ##Methods
-- Use `geom_point()`, `geom_hline()`, and `geom_segment` to create the lollipops
+- Use `fct_relevel()` (above) to order the books to be facetted by year
+- Use `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops
 - `facet_wrap()` by title, relabel with nice names
 - Add axis labels and title/subtitle
 - Change colors and legend
@@ -161,7 +162,6 @@ plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
   scale_color_viridis(discrete = TRUE, name = "Book", labels = labels) +
   theme_minimal() +
   theme(strip.text = element_text(face = "italic")) +
-  #theme(axis.title.x=element_blank()) +
   theme(axis.ticks.x=element_blank()) +
   theme(axis.text.x=element_blank()) +
   theme(legend.position = "bottom")
@@ -177,12 +177,10 @@ plot
 ##Audience Description
 I am aiming for a general audience--but hopefully readers of Tolstoy. :)
 
-
 ##Graph Type Description
 This graph is a *lollipop plot*. A lollipop plot is a hybrid of a *scatter plot* and a *bar chart*. 
 
 It shows the relationship between a numeric variable and a categorical or numeric variable. It can also be used to highlight the distace from a certain value--here 0.5, indicating an equal number of positive and negative words.
-
 
 ##Representation Description
 This plot shows the relationship between Sentiment Ratio and Plot Trajectory across three Tolstoy novels.
@@ -190,10 +188,10 @@ This plot shows the relationship between Sentiment Ratio and Plot Trajectory acr
 We can use this to get a sense of the "positivity" and "negativity" in Tolstoy's novels over his career. In particular, we can see that *Childhood* and *Anna Karenina* are overall more positive than *Resurrection*.
 
 ##How to read it & what to look for
-* Title and x- and y- axes
-* Baseline value the lollipops are extending from
-* Look at one lollipop
-* Analyze the general shape
+* Start by reading the title and x- and y- axes
+* Then look for the baseline value the lollipops are extending from--here 0.5
+* Look at one lollipop, interpret the meaning of that point
+* Finally, analyze the general shape of the graph
 
 ##Presentation Description
 Color is used here to distinguish between the three novels.

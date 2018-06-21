@@ -155,7 +155,8 @@ data_final$title&lt;- fct_relevel(data_final$title, &quot;childhood&quot;)</code
 <div id="methods" class="section level2">
 <h2>Methods</h2>
 <ul>
-<li>Use <code>geom_point()</code>, <code>geom_hline()</code>, and <code>geom_segment</code> to create the lollipops</li>
+<li>Use <code>fct_relevel()</code> (above) to order the books to be facetted by year</li>
+<li>Use <code>geom_point()</code>, <code>geom_hline()</code>, and <code>geom_segment()</code> to create the lollipops</li>
 <li><code>facet_wrap()</code> by title, relabel with nice names</li>
 <li>Add axis labels and title/subtitle</li>
 <li>Change colors and legend</li>
@@ -173,7 +174,6 @@ plot &lt;- ggplot(data_final, aes(index, sentiment, color =  title)) +
   scale_color_viridis(discrete = TRUE, name = &quot;Book&quot;, labels = labels) +
   theme_minimal() +
   theme(strip.text = element_text(face = &quot;italic&quot;)) +
-  #theme(axis.title.x=element_blank()) +
   theme(axis.ticks.x=element_blank()) +
   theme(axis.text.x=element_blank()) +
   theme(legend.position = &quot;bottom&quot;)</code></pre>
@@ -200,10 +200,10 @@ plot &lt;- ggplot(data_final, aes(index, sentiment, color =  title)) +
 <div id="how-to-read-it-what-to-look-for" class="section level2">
 <h2>How to read it &amp; what to look for</h2>
 <ul>
-<li>Title and x- and y- axes</li>
-<li>Baseline value the lollipops are extending from</li>
-<li>Look at one lollipop</li>
-<li>Analyze the general shape</li>
+<li>Start by reading the title and x- and y- axes</li>
+<li>Then look for the baseline value the lollipops are extending from–here 0.5</li>
+<li>Look at one lollipop, interpret the meaning of that point</li>
+<li>Finally, analyze the general shape of the graph</li>
 </ul>
 </div>
 <div id="presentation-description" class="section level2">
