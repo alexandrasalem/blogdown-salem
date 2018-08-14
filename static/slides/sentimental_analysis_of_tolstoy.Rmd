@@ -114,7 +114,8 @@ plot
 #Methods
 - Used `ggplot2` (of course)!
 - Used `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops
-- `facet_wrap()` by title, relabel with nice names
+- Used `facet_wrap()` by title, relabel with nice names
+- Used `fct_relevel()` to order the books by year
 - Added axis labels and title/subtitle, change colors, edited legend
 
 ---
