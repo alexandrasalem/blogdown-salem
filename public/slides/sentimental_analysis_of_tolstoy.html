@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Sentimental Analysis of Tolstoy</title>
+    <title>A Sentimental Analysis of Tolstoy</title>
     <meta charset="utf-8">
     <meta name="author" content="Alex Salem" />
-    <meta name="date" content="2018-06-17" />
+    <meta name="date" content="2018-08-14" />
     <link href="sentimental_analysis_of_tolstoy_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="sentimental_analysis_of_tolstoy_files/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
   </head>
@@ -12,9 +12,9 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Sentimental Analysis of Tolstoy
+# A Sentimental Analysis of Tolstoy
 ### Alex Salem
-### June 17, 2018
+### August 14, 2018
 
 ---
 
@@ -101,22 +101,50 @@ head(data_final)
 
 
 ---
-#Final Visualization: Lollipop Plot
+#Final Visualization Part 1: Lollipop Plot
 &lt;img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-10-1.png" width="672" /&gt;
+---
+#How can we improve this?
+Ideas:
+- Legend at the bottom is repetitive
+- Add annotations-- what's happening in these various sections?
+
+--
+
+
+Implementation:
+
+```r
+data_final_2[24:26,]
+```
+
+```
+## # A tibble: 3 x 6
+## # Groups:   title [1]
+##   title         index negative positive sentiment text                    
+##   &lt;fct&gt;         &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                   
+## 1 anna_karenina    23      307      322     0.512 " "                     
+## 2 anna_karenina    24      428      214     0.333 "Karenin \nupset, \nAnn…
+## 3 anna_karenina    25      256      297     0.537 " "
+```
 
 ---
+#Final Visualization Part 2: Lollipop Plot
+
+
+&lt;img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-14-1.png" width="672" /&gt;
+---
 #Methods
-- Use `geom_point()`, `geom_hline()`, and `geom_segment` to create the lollipops
+- Used `ggplot2` (of course)!
+- Used `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops, used `geom_text()` to add the annotations
 - `facet_wrap()` by title, relabel with nice names
-- Add axis labels and title/subtitle, change colors and legend
+- Add axis labels and title/subtitle, change colors, remove legend
 
 --
 
 
 ```r
-labels &lt;- c(childhood = "Childhood, 1852", anna_karenina = "Anna Karenina, 1877", resurrection = "Resurrection, 1899")
-
-plot &lt;- ggplot(data_final, aes(index, sentiment, color =  title)) +
+plot_2 &lt;- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
   geom_point(size = .8, show.legend = FALSE) +
   geom_hline(aes(yintercept=.5))+
   geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
@@ -129,7 +157,9 @@ plot &lt;- ggplot(data_final, aes(index, sentiment, color =  title)) +
   theme(strip.text = element_text(face = "italic")) +
   theme(axis.ticks.x=element_blank()) +
   theme(axis.text.x=element_blank()) +
-  theme(legend.position = "bottom")
+  theme(legend.position = "none") +
+  geom_text(size = 3, aes(y = case_when(sentiment&gt;.5 ~ sentiment + .09,
+                                          sentiment &lt;= .5 ~ sentiment -.12)))
 ```
 
 ---
@@ -143,8 +173,11 @@ https://juliasilge.com/blog/life-changing-magic/
 https://python-graph-gallery.com/lollipop-plot/
 
 ---
-class: center, middle
+class: center
 #Thank you!
+##Special thanks to Alison Hill, Steven Bedrick, and Jackie Wirz
+##And to you all! :)
+##Any questions?
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create();
