@@ -1,23 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>A Sentimental Analysis of Tolstoy</title>
-    <meta charset="utf-8">
-    <meta name="author" content="Alex Salem" />
-    <meta name="date" content="2018-08-14" />
-    <link href="sentimental_analysis_of_tolstoy_files/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="sentimental_analysis_of_tolstoy_files/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
-  </head>
-  <body>
-    <textarea id="source">
-class: center, middle, inverse, title-slide
-
-# A Sentimental Analysis of Tolstoy
-### Alex Salem
-### August 14, 2018
-
 ---
-
+title: "A Sentimental Analysis of Tolstoy"
+author: "Alex Salem"
+date: "August 14, 2018"
+output: xaringan::moon_reader
+---
 
 #Introduction
 Goal: Create a graph showing sentiment analysis of three Tolstoy novels over his career.
@@ -52,9 +38,9 @@ glimpse(data)
 ```
 ## Observations: 564,231
 ## Variables: 3
-## $ rowname &lt;chr&gt; "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11...
-## $ title   &lt;chr&gt; "childhood", "childhood", "childhood", "childhood", "c...
-## $ words   &lt;chr&gt; "the", "tutor", "karl", "ivanitch", "on", "the", "of",...
+## $ rowname <chr> "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11...
+## $ title   <chr> "childhood", "childhood", "childhood", "childhood", "c...
+## $ words   <chr> "the", "tutor", "karl", "ivanitch", "on", "the", "of",...
 ```
 
 ---
@@ -69,8 +55,8 @@ glimpse(get_sentiments("bing"))
 ```
 ## Observations: 6,788
 ## Variables: 2
-## $ word      &lt;chr&gt; "2-faced", "2-faces", "a+", "abnormal", "abolish", "...
-## $ sentiment &lt;chr&gt; "negative", "negative", "positive", "negative", "neg...
+## $ word      <chr> "2-faced", "2-faces", "a+", "abnormal", "abolish", "...
+## $ sentiment <chr> "negative", "negative", "positive", "negative", "neg...
 ```
 
 ---
@@ -89,7 +75,7 @@ head(data_final)
 ## # A tibble: 6 x 5
 ## # Groups:   title [1]
 ##   title         index negative positive sentiment
-##   &lt;fct&gt;         &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+##   <fct>         <dbl>    <dbl>    <dbl>     <dbl>
 ## 1 anna_karenina     0      289      300     0.509
 ## 2 anna_karenina     1      222      350     0.612
 ## 3 anna_karenina     2      230      375     0.620
@@ -102,7 +88,7 @@ head(data_final)
 
 ---
 #Final Visualization Part 1: Lollipop Plot
-&lt;img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-10-1.png" width="672" /&gt;
+<img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-10-1.png" width="672" />
 ---
 #How can we improve this?
 Ideas:
@@ -122,7 +108,7 @@ data_final_2[24:26,]
 ## # A tibble: 3 x 6
 ## # Groups:   title [1]
 ##   title         index negative positive sentiment text                    
-##   &lt;fct&gt;         &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                   
+##   <fct>         <dbl>    <dbl>    <dbl>     <dbl> <chr>                   
 ## 1 anna_karenina    23      307      322     0.512 " "                     
 ## 2 anna_karenina    24      428      214     0.333 "Karenin \nupset, \nAnn…
 ## 3 anna_karenina    25      256      297     0.537 " "
@@ -132,7 +118,7 @@ data_final_2[24:26,]
 #Final Visualization Part 2: Lollipop Plot
 
 
-&lt;img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-14-1.png" width="672" /&gt;
+<img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-14-1.png" width="672" />
 ---
 #Methods
 - Used `ggplot2` (of course)!
@@ -144,12 +130,12 @@ data_final_2[24:26,]
 
 
 ```r
-plot_2 &lt;- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
+plot_2 <- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
   geom_point(size = .8, show.legend = FALSE) +
   geom_hline(aes(yintercept=.5))+
   geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
   facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
-  ggtitle("Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory", subtitle = "Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio &gt; 0.5 indicates more positive than negative words \nSentiment Ratio &lt; 0.5 indicates more negative than positive words      ") +
+  ggtitle("Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory", subtitle = "Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio > 0.5 indicates more positive than negative words \nSentiment Ratio < 0.5 indicates more negative than positive words      ") +
   labs(x = "Plot Trajectory", y = "Sentiment Ratio")+
   expand_limits(y=c(0,1)) +
   scale_color_viridis(discrete = TRUE, name = "Book", labels = labels) +
@@ -158,8 +144,8 @@ plot_2 &lt;- ggplot(data_final_2, aes(index, sentiment, color =  title, label = 
   theme(axis.ticks.x=element_blank()) +
   theme(axis.text.x=element_blank()) +
   theme(legend.position = "none") +
-  geom_text(size = 2.5, aes(y = case_when(sentiment&gt;.5 ~ sentiment + .09,
-                                          sentiment &lt;= .5 ~ sentiment -.12)))
+  geom_text(size = 2.5, aes(y = case_when(sentiment>.5 ~ sentiment + .09,
+                                          sentiment <= .5 ~ sentiment -.12)))
 ```
 
 ---
@@ -175,47 +161,3 @@ https://python-graph-gallery.com/lollipop-plot/
 ---
 class: center, middle
 #Thank you!
-    </textarea>
-<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-<script>var slideshow = remark.create();
-if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
-  window.dispatchEvent(new Event('resize'));
-});
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
-  if (!r) return;
-  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
-  d.head.appendChild(s);
-})();</script>
-
-<script>
-(function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
-  for (i = 0; i < codes.length;) {
-    code = codes[i];
-    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
-      text = code.textContent;
-      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
-          /^\$\$(.|\s)+\$\$$/.test(text) ||
-          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
-        code.outerHTML = code.innerHTML;  // remove <code></code>
-        continue;
-      }
-    }
-    i++;
-  }
-})();
-</script>
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-(function () {
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
-  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
-    script.src  = script.src.replace(/^https?:/, '');
-  document.getElementsByTagName('head')[0].appendChild(script);
-})();
-</script>
-  </body>
-</html>
