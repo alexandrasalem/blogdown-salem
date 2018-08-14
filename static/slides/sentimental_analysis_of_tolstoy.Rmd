@@ -108,14 +108,26 @@ plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
 #Final Visualization Part 1: Lollipop Plot
 ```{r, echo = FALSE}
 plot
-``` 
+```
+
+---
+#Methods
+- Used `ggplot2` (of course)!
+- Used `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops
+- `facet_wrap()` by title, relabel with nice names
+- Added axis labels and title/subtitle, change colors, edited legend
+
+---
+#Final Visualization Part 1: Lollipop Plot
+```{r, echo = FALSE}
+plot
+```
+
 ---
 #How can we improve this?
-Ideas:
+###Ideas:
 - Legend at the bottom is repetitive
 - Add annotations-- what's happening in these various sections?
-
---
 
 ```{r, echo = FALSE}
 data_final_2 <- data_final %>% 
@@ -123,10 +135,16 @@ data_final_2 <- data_final %>%
 
 data_final_2$text = c(" ", " ", "New \nlove", rep(" ", 21),"Karenin \nupset, \nAnna missing \nson", rep(" ", 11), "Anna \nDies", rep(" ", 83))
 ```
-Implementation:
+
+---
+#How can we improve this?
+###Implementation:
+- Add in `theme(legend.position = "none")`
+- Add a `text` variable as follows:
 ```{r}
 data_final_2[24:26,]
 ```
+- Then add a `geom_text()` layer to the plot
 
 ---
 #Final Visualization Part 2: Lollipop Plot
@@ -154,12 +172,6 @@ plot_2
 ```
 ---
 #Methods
-- Used `ggplot2` (of course)!
-- Used `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops, used `geom_text()` to add the annotations
-- `facet_wrap()` by title, relabel with nice names
-- Add axis labels and title/subtitle, change colors, remove legend
-
---
 
 ```{r}
 plot_2 <- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
@@ -196,4 +208,4 @@ class: center
 #Thank you!
 ##Special thanks to Alison Hill, Steven Bedrick, and Jackie Wirz
 ##And to you all! :)
-##Any questions?
+##Any questions/ideas for next steps?
