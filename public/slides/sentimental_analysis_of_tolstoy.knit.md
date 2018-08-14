@@ -1,7 +1,7 @@
 ---
 title: "A Sentimental Analysis of Tolstoy"
 author: "Alex Salem"
-date: "August 14, 2018"
+date: "August 14, 2018 \nSlides at: https://alexsalem.netlify.com/"
 output: xaringan::moon_reader
 ---
 
@@ -89,16 +89,32 @@ head(data_final)
 ---
 #Final Visualization Part 1: Lollipop Plot
 <img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+
+---
+#Methods
+- Used `ggplot2` (of course)!
+- Used `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops
+- Used `facet_wrap()` by title, relabel with nice names
+- Used `fct_relevel()` to order the books by year
+- Added axis labels and title/subtitle, change colors, edited legend
+
+---
+#Final Visualization Part 1: Lollipop Plot
+<img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+
 ---
 #How can we improve this?
-Ideas:
+###Ideas:
 - Legend at the bottom is repetitive
 - Add annotations-- what's happening in these various sections?
 
---
 
 
-Implementation:
+---
+#How can we improve this?
+###Implementation:
+- Add in `theme(legend.position = "none")`
+- Add a `text` variable as follows:
 
 ```r
 data_final_2[24:26,]
@@ -113,20 +129,15 @@ data_final_2[24:26,]
 ## 2 anna_karenina    24      428      214     0.333 "Karenin \nupset, \nAnn…
 ## 3 anna_karenina    25      256      297     0.537 " "
 ```
+- Then add a `geom_text()` layer to the plot
 
 ---
 #Final Visualization Part 2: Lollipop Plot
 
 
-<img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+<img src="sentimental_analysis_of_tolstoy_files/figure-html/unnamed-chunk-15-1.png" width="672" />
 ---
 #Methods
-- Used `ggplot2` (of course)!
-- Used `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops, used `geom_text()` to add the annotations
-- `facet_wrap()` by title, relabel with nice names
-- Add axis labels and title/subtitle, change colors, remove legend
-
---
 
 
 ```r
@@ -144,7 +155,7 @@ plot_2 <- ggplot(data_final_2, aes(index, sentiment, color =  title, label = tex
   theme(axis.ticks.x=element_blank()) +
   theme(axis.text.x=element_blank()) +
   theme(legend.position = "none") +
-  geom_text(size = 2.5, aes(y = case_when(sentiment>.5 ~ sentiment + .09,
+  geom_text(size = 3, aes(y = case_when(sentiment>.5 ~ sentiment + .09,
                                           sentiment <= .5 ~ sentiment -.12)))
 ```
 
@@ -159,5 +170,8 @@ https://juliasilge.com/blog/life-changing-magic/
 https://python-graph-gallery.com/lollipop-plot/
 
 ---
-class: center, middle
+class: center
 #Thank you!
+##Special thanks to Alison Hill, Steven Bedrick, and Jackie Wirz
+##And to you all! :)
+##Any questions/ideas for next steps?
