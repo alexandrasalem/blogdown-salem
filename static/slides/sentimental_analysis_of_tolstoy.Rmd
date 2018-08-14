@@ -1,7 +1,7 @@
 ---
-title: "Sentimental Analysis of Tolstoy"
+title: "A Sentimental Analysis of Tolstoy"
 author: "Alex Salem"
-date: "June 17, 2018"
+date: "August 14, 2018"
 output: xaringan::moon_reader
 ---
 
@@ -105,23 +105,33 @@ plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
 ```
 
 ---
-#Final Visualization: Lollipop Plot
+#Final Visualization Part 1: Lollipop Plot
 ```{r, echo = FALSE}
 plot
 ``` 
-
 ---
-#Methods
-- Use `geom_point()`, `geom_hline()`, and `geom_segment` to create the lollipops
-- `facet_wrap()` by title, relabel with nice names
-- Add axis labels and title/subtitle, change colors and legend
+#How can we improve this?
+Ideas:
+- Legend at the bottom is repetitive
+- Add annotations-- what's happening in these various sections?
 
 --
 
-```{r}
-labels <- c(childhood = "Childhood, 1852", anna_karenina = "Anna Karenina, 1877", resurrection = "Resurrection, 1899")
+```{r, echo = FALSE}
+data_final_2 <- data_final %>% 
+  mutate(text = "")
 
-plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
+data_final_2$text = c(" ", " ", "New \nlove", rep(" ", 21),"Karenin \nupset, \nAnna missing \nson", rep(" ", 11), "Anna \nDies", rep(" ", 83))
+```
+Implementation:
+```{r}
+data_final_2[24:26,]
+```
+
+---
+#Final Visualization Part 2: Lollipop Plot
+```{r, echo = FALSE}
+plot_2 <- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
   geom_point(size = .8, show.legend = FALSE) +
   geom_hline(aes(yintercept=.5))+
   geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
@@ -134,7 +144,40 @@ plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
   theme(strip.text = element_text(face = "italic")) +
   theme(axis.ticks.x=element_blank()) +
   theme(axis.text.x=element_blank()) +
-  theme(legend.position = "bottom")
+  theme(legend.position = "none") +
+  geom_text(size = 2.5, aes(y = case_when(sentiment>.5 ~ sentiment + .09,
+                                          sentiment <= .5 ~ sentiment -.12)))
+```
+
+```{r, echo = FALSE}
+plot_2
+```
+---
+#Methods
+- Used `ggplot2` (of course)!
+- Used `geom_point()`, `geom_hline()`, and `geom_segment()` to create the lollipops, used `geom_text()` to add the annotations
+- `facet_wrap()` by title, relabel with nice names
+- Add axis labels and title/subtitle, change colors, remove legend
+
+--
+
+```{r}
+plot_2 <- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
+  geom_point(size = .8, show.legend = FALSE) +
+  geom_hline(aes(yintercept=.5))+
+  geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
+  facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
+  ggtitle("Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory", subtitle = "Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio > 0.5 indicates more positive than negative words \nSentiment Ratio < 0.5 indicates more negative than positive words      ") +
+  labs(x = "Plot Trajectory", y = "Sentiment Ratio")+
+  expand_limits(y=c(0,1)) +
+  scale_color_viridis(discrete = TRUE, name = "Book", labels = labels) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "italic")) +
+  theme(axis.ticks.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  theme(legend.position = "none") +
+  geom_text(size = 2.5, aes(y = case_when(sentiment>.5 ~ sentiment + .09,
+                                          sentiment <= .5 ~ sentiment -.12)))
 
 ```
 
