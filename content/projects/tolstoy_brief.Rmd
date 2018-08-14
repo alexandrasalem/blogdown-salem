@@ -1,7 +1,7 @@
 ---
 title: "A Sentimental Analysis of Tolstoy"
 author: "Alex Salem"
-date: "June 18, 2018"
+date: 2018-08-14
 output: html_document
 ---
 ##Introduction

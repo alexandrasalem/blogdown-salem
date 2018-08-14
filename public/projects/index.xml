@@ -6,10 +6,19 @@
     <description>Recent content in Projects on Alex Salem&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 19 Aug 2015 20:29:37 -0700</lastBuildDate>
+    <lastBuildDate>Tue, 14 Aug 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/projects/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>A Sentimental Analysis of Tolstoy</title>
+      <link>/projects/tolstoy_brief/</link>
+      <pubDate>Tue, 14 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/tolstoy_brief/</guid>
+      <description>A Sentimental Analysis of Tolstoy       code{white-space: pre;} pre:not([class]) { background-color: white; }  if (window.hljs) { hljs.configure({languages: []}); hljs.initHighlightingOnLoad(); if (document.readyState &amp;&amp; document.readyState === &#34;complete&#34;) { window.setTimeout(function() { hljs.initHighlighting(); }, 0); } }  h1 { font-size: 34px; } h1.title { font-size: 38px; } h2 { font-size: 30px; } h3 { font-size: 24px; } h4 { font-size: 18px; } h5 { font-size: 16px; } h6 { font-size: 12px; } .</description>
+    </item>
     
     <item>
       <title>Projects</title>
@@ -18,19 +27,6 @@
       
       <guid>/projects/projects/</guid>
       <description></description>
-    </item>
-    
-    <item>
-      <title>A Sentimental Analysis of Tolstoy</title>
-      <link>/projects/tolstoy_brief/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/projects/tolstoy_brief/</guid>
-      <description>Introduction Goal: Create a graph showing sentiment analysis of three Tolstoy novels over his career.
-Inspired by Julia Silge’s sentiment analysis of Jane Austen novels.
-Hypothesis: Tolstoy’s last novel, Resurrection, will have a different sentiment pattern than his others.
- Description of the Data Full text of three novels by Leo Tolstoy:
- Childhood (1852), translated into English by C.J. Hogarth Anna Karenina (1877), translated into English by Constance Garnett Resurrection (1899), translated into English by Mrs.</description>
     </item>
     
   </channel>
