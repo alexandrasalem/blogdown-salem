@@ -1288,6 +1288,125 @@ plot &lt;- ggplot(data_final, aes(index, sentiment, color =  title)) +
 <pre class="r"><code>plot</code></pre>
 <p><img src="/projects/tolstoy_brief_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
+<div id="edited-version" class="section level2">
+<h2>Edited Version</h2>
+<div id="stevens-q" class="section level3">
+<h3>Steven’s q:</h3>
+<p>Investigating Steven’s q on what percentage of words have a sentiment, if there are any that are the most common:</p>
+<pre class="r"><code>steve_q &lt;- data %&gt;% 
+  group_by(title) %&gt;% 
+  inner_join(get_sentiments(&quot;bing&quot;), by = c(&quot;words&quot; = &quot;word&quot;))
+
+steve_q</code></pre>
+<pre><code>## # A tibble: 34,315 x 4
+## # Groups:   title [?]
+##    rowname title     words     sentiment
+##    &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
+##  1 22      childhood wonderful positive 
+##  2 66      childhood saint     positive 
+##  3 77      childhood dead      negative 
+##  4 79      childhood fell      negative 
+##  5 101     childhood dead      negative 
+##  6 141     childhood soft      positive 
+##  7 175     childhood disturb   negative 
+##  8 182     childhood killing   negative 
+##  9 217     childhood tease     negative 
+## 10 222     childhood well      positive 
+## # ... with 34,305 more rows</code></pre>
+<pre class="r"><code>steve_q %&gt;% 
+  filter(title == &quot;childhood&quot;) %&gt;% 
+  count(words, sort = TRUE) </code></pre>
+<pre><code>## # A tibble: 907 x 3
+## # Groups:   title [1]
+##    title     words       n
+##    &lt;chr&gt;     &lt;chr&gt;   &lt;int&gt;
+##  1 childhood well       81
+##  2 childhood love       72
+##  3 childhood good       40
+##  4 childhood like       32
+##  5 childhood smile      27
+##  6 childhood great      26
+##  7 childhood grief      24
+##  8 childhood poor       21
+##  9 childhood darling    19
+## 10 childhood enough     17
+## # ... with 897 more rows</code></pre>
+<pre class="r"><code>steve_q %&gt;% 
+  filter(title == &quot;anna_karenina&quot;) %&gt;% 
+  count(words, sort = TRUE) </code></pre>
+<pre><code>## # A tibble: 2,319 x 3
+## # Groups:   title [1]
+##    title         words       n
+##    &lt;chr&gt;         &lt;chr&gt;   &lt;int&gt;
+##  1 anna_karenina well      627
+##  2 anna_karenina like      516
+##  3 anna_karenina love      426
+##  4 anna_karenina good      328
+##  5 anna_karenina smile     328
+##  6 anna_karenina right     258
+##  7 anna_karenina work      257
+##  8 anna_karenina better    228
+##  9 anna_karenina great     206
+## 10 anna_karenina smiling   177
+## # ... with 2,309 more rows</code></pre>
+<pre class="r"><code>steve_q %&gt;% 
+  filter(title == &quot;resurrection&quot;) %&gt;% 
+  count(words, sort = TRUE) </code></pre>
+<pre><code>## # A tibble: 1,680 x 3
+## # Groups:   title [1]
+##    title        words        n
+##    &lt;chr&gt;        &lt;chr&gt;    &lt;int&gt;
+##  1 resurrection well       293
+##  2 resurrection like       217
+##  3 resurrection prison     200
+##  4 resurrection right      169
+##  5 resurrection good       163
+##  6 resurrection love       123
+##  7 resurrection smile      112
+##  8 resurrection advocate   101
+##  9 resurrection prisoner    97
+## 10 resurrection work        82
+## # ... with 1,670 more rows</code></pre>
+<p>“Well” is the most common world–in the future, could take that word out and look at the results.</p>
+<p>Total of 34315 words with a sentiment value in the data, which is 6% of the words.</p>
+</div>
+<div id="how-can-we-improve-this" class="section level3">
+<h3>How can we improve this?</h3>
+<p>Ideas: - Legend at the bottom is repetitive - Add annotations– what’s happening in these various sections?</p>
+<p>Implementation: - Add in <code>theme(legend.position = &quot;none&quot;)</code> - Add a <code>text</code> variable and <code>geom_text()</code> layer</p>
+</div>
+<div id="what-happens-in-different-sections" class="section level3">
+<h3>What happens in different sections?</h3>
+<p>Word number 332681 total 353452 332681/353452 = x/40 .941 37/40 so 37th section is when Anna killed herself.</p>
+<p>what’s in 25/40 -&gt; .625 220907 to 229744 Karenin upset, Anna missing son.</p>
+<p>Beginning, new love, Vronsky and Levin meeting again, etc.</p>
+<p>Adding that info to data frame:</p>
+<pre class="r"><code>data_final_2 &lt;- data_final %&gt;% 
+  mutate(text = &quot;&quot;)
+
+data_final_2$text = c(&quot; &quot;, &quot; &quot;, &quot;New \nlove&quot;, rep(&quot; &quot;, 21),&quot;Karenin \nupset, \nAnna missing \nson&quot;, rep(&quot; &quot;, 11), &quot;Anna \nDies&quot;, rep(&quot; &quot;, 83))</code></pre>
+<p>Making a new plot, remove legend and add <code>geom_text()</code> layer:</p>
+<pre class="r"><code>plot_2 &lt;- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
+  geom_point(size = .8, show.legend = FALSE) +
+  geom_hline(aes(yintercept=.5))+
+  geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
+  facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
+  ggtitle(&quot;Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory&quot;, subtitle = &quot;Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio &gt; 0.5 indicates more positive than negative words \nSentiment Ratio &lt; 0.5 indicates more negative than positive words      &quot;) +
+  labs(x = &quot;Plot Trajectory&quot;, y = &quot;Sentiment Ratio&quot;)+
+  expand_limits(y=c(0,1)) +
+  scale_color_viridis(discrete = TRUE, name = &quot;Book&quot;, labels = labels) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = &quot;italic&quot;)) +
+  theme(axis.ticks.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  theme(legend.position = &quot;none&quot;) +
+  geom_text(size = 2.5, aes(y = case_when(sentiment&gt;.5 ~ sentiment + .1,
+                                          sentiment &lt;= .5 ~ sentiment -.13)))
+
+plot_2</code></pre>
+<p><img src="/projects/tolstoy_brief_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+</div>
 <div id="audience-description" class="section level2">
 <h2>Audience Description</h2>
 <p>I am aiming for a general audience–but hopefully readers of Tolstoy. :)</p>

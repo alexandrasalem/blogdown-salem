@@ -132,6 +132,8 @@ data_final<- data %>%
   mutate(sentiment = positive/(positive+negative))
 
 data_final$title<- fct_relevel(data_final$title, "childhood")
+
+
 ```
 - Join sentiment values (either "positive" or "negative") to words in `data`
 - Divide data into 40 sections, count number of positive and negative words in each section
@@ -173,6 +175,85 @@ plot <- ggplot(data_final, aes(index, sentiment, color =  title)) +
 plot
 ``` 
 
+##Edited Version
+###Steven's q:
+Investigating Steven's q on what percentage of words have a sentiment, if there are any that are the most common:
+
+```{r}
+steve_q <- data %>% 
+  group_by(title) %>% 
+  inner_join(get_sentiments("bing"), by = c("words" = "word"))
+
+steve_q
+
+steve_q %>% 
+  filter(title == "childhood") %>% 
+  count(words, sort = TRUE) 
+
+steve_q %>% 
+  filter(title == "anna_karenina") %>% 
+  count(words, sort = TRUE) 
+
+steve_q %>% 
+  filter(title == "resurrection") %>% 
+  count(words, sort = TRUE) 
+```
+"Well" is the most common world--in the future, could take that word out and look at the results.
+
+Total of 34315 words with a sentiment value in the data, which is 6% of the words.
+
+###How can we improve this?
+Ideas:
+- Legend at the bottom is repetitive
+- Add annotations-- what's happening in these various sections?
+
+Implementation:
+- Add in `theme(legend.position = "none")`
+- Add a `text` variable and `geom_text()` layer
+
+###What happens in different sections?
+Word number 332681
+total 353452
+332681/353452 = x/40
+.941
+37/40
+so 37th section is when Anna killed herself.
+
+what's in 25/40 -> .625
+220907 to 229744
+Karenin upset, Anna missing son.
+
+Beginning, new love, Vronsky and Levin meeting again, etc.
+
+Adding that info to data frame:
+```{r}
+data_final_2 <- data_final %>% 
+  mutate(text = "")
+
+data_final_2$text = c(" ", " ", "New \nlove", rep(" ", 21),"Karenin \nupset, \nAnna missing \nson", rep(" ", 11), "Anna \nDies", rep(" ", 83))
+```
+
+Making a new plot, remove legend and add `geom_text()` layer:
+```{r}
+plot_2 <- ggplot(data_final_2, aes(index, sentiment, color =  title, label = text)) +
+  geom_point(size = .8, show.legend = FALSE) +
+  geom_hline(aes(yintercept=.5))+
+  geom_segment(aes(x=index, xend = index, y = sentiment, yend = .5)) +
+  facet_wrap(~title, ncol = 3, labeller = labeller(title = labels)) +
+  ggtitle("Positive and Negative Sentiment in Tolstoy Novels across Plot Trajectory", subtitle = "Sentiment Ratio = Positive Words / (Positive Words + Negative Words) \nSentiment Ratio > 0.5 indicates more positive than negative words \nSentiment Ratio < 0.5 indicates more negative than positive words      ") +
+  labs(x = "Plot Trajectory", y = "Sentiment Ratio")+
+  expand_limits(y=c(0,1)) +
+  scale_color_viridis(discrete = TRUE, name = "Book", labels = labels) +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "italic")) +
+  theme(axis.ticks.x=element_blank()) +
+  theme(axis.text.x=element_blank()) +
+  theme(legend.position = "none") +
+  geom_text(size = 2.5, aes(y = case_when(sentiment>.5 ~ sentiment + .1,
+                                          sentiment <= .5 ~ sentiment -.13)))
+
+plot_2
+```
 
 ##Audience Description
 I am aiming for a general audience--but hopefully readers of Tolstoy. :)
